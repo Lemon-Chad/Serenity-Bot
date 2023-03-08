@@ -3,6 +3,10 @@ from nextcord import Interaction
 from nextcord.ext import commands
 
 
+with open("token.txt", "r") as f:
+    token = f.read()
+
+
 TESTING_GUILDS = [658882526470864896, 811033467139784734, 1082795791476858980]
 
 client = commands.Bot()
@@ -24,4 +28,4 @@ async def on_ready():
     print("C: LemonChad")
 
 
-client.run('MTA4Mjc4NjI4ODQwMDM0NzI2OA.GDcRAo.6cmH3pdmniFcPYgGW68NzAzC04T4J9clBku4Hs')
+client.run(token)

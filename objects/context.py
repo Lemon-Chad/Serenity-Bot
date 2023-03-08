@@ -1,4 +1,4 @@
-from cogs.entities import DisCharacter, Enemy
+from objects.entities import DisCharacter, Enemy
 
 
 class RPGContext:

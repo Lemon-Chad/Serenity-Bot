@@ -3,7 +3,7 @@ from nextcord import Interaction
 from nextcord.ext import commands
 import nextcord.ui as ui
 from typing import List
-from cogs.items import Item
+from objects.items import Item
 
 
 class Fightable():

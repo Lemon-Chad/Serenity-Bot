@@ -243,7 +243,7 @@ class Battle():
         await self.display_text("The enemy prepares their attack...")
         await asyncio.sleep(random.random() * 1.5 + 1)
         
-        event = QuicktimeEvent(1, 
+        event = QuicktimeEvent(1,
                                 nextcord.ButtonStyle.success, 
                                 nextcord.ButtonStyle.secondary,
                                 '🔄',
@@ -256,7 +256,12 @@ class Battle():
         dmg = 0
         if event.clicked:
             if event.success:
-                await self.display_text(f"You dodged the attack!", color=Battle.GREEN)
+                dodge_chance = 0.1 + 0.8 / (1 + math.exp(-4.6 * ((self.player.speed + 1) / (self.enemy.speed + 1) - 1)))
+                if random.random() < dodge_chance:
+                    await self.display_text(f"You fully dodged the attack!", color=Battle.GREEN)
+                else:
+                    dmg = self.player.damage(self.enemy.strength)
+                    await self.display_text(f"You partially dodged the attack, but the enemy was faster.\nThe enemy dealt **{dmg} damage!**", color=Battle.GREEN)
             else:
                 dmg = self.player.damage(self.enemy.strength)
                 await self.display_text(f"You fumbled, and the enemy dealt **{dmg} damage!**")

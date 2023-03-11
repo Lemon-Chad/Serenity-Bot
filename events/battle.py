@@ -67,12 +67,20 @@ class Battle():
         await self.wait_for_ok() 
     
     async def attack(self):
-        await self.player_attack()
+        player_first = random.random() <= 0.5 * (1 - math.log((self.player.speed + 1) / (self.enemy.speed + 1), 0.5))
+        
+        if player_first:
+            await self.player_attack()
+        else:
+            await self.enemy_attack()
         
         if self.enemy.hp <= 0 or self.player.hp <= 0:
             return
         
-        await self.enemy_attack()
+        if player_first:
+            await self.enemy_attack()
+        else:
+            await self.player_attack()
         
     async def player_attack(self):
         await self.display_text("You ready your sword...")

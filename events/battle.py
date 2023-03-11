@@ -2,7 +2,7 @@ from objects.entities import DisCharacter, Enemy
 from nextcord import Interaction
 import nextcord
 from ui.battle import ActionView, BattleActions
-from ui.helper import ConfirmButton, bar
+from ui.helper import ConfirmButton, tiered_bar
 from ui.inventory import InventoryView
 from events.quicktime import QuicktimeEvent
 import objects.context as rpgctx
@@ -33,8 +33,8 @@ class Battle():
         
         while self.player.hp > 0 and self.enemy.hp > 0:
             await self.display_embed([
-                (self.player.name, bar(self.player.hp, self.player.max_hp, scale=2)),
-                (self.enemy.name, bar(self.enemy.hp, self.enemy.max_hp, scale=2))
+                (self.player.name, tiered_bar(self.player.hp, self.player.max_hp)),
+                (self.enemy.name, tiered_bar(self.enemy.hp, self.enemy.max_hp))
             ])
             action_view = ActionView()
             await self.display_view(action_view)

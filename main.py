@@ -1,6 +1,7 @@
 import nextcord
 from nextcord import Interaction
 from nextcord.ext import commands
+import objects.entities
 
 
 with open("token.txt", "r") as f:
@@ -26,6 +27,11 @@ async def on_ready():
     print("V: 1.0.0a")
     print("U: March 7. 2023")
     print("C: LemonChad")
+
+
+@client.slash_command(name="generatestats", description="Generates random stats", guild_ids=TESTING_GUILDS)
+async def generate_stats(interaction: Interaction, power_lvl: int):
+    await interaction.send(str(objects.entities.generate_stats(power_lvl)))
 
 
 client.run(token)

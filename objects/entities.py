@@ -4,6 +4,23 @@ from nextcord.ext import commands
 import nextcord.ui as ui
 from typing import List
 from objects.items import Item
+import random
+
+
+def generate_stats(power_level, block_size=0.25, movement_count=1000):
+    stats = [ 1, 1, 1, 1 ]
+    i = 0
+    while i < movement_count:
+        j = random.randint(0, 3)
+        k = random.choice([ x for x in range(0, 3) if x != i ])
+        
+        if stats[j] <= block_size:
+            continue
+        i += 1
+        
+        stats[j] -= block_size
+        stats[k] += block_size
+    return [ round(x * power_level) for x in stats ]
 
 
 class Fightable():

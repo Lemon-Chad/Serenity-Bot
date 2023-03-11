@@ -5,6 +5,7 @@ import nextcord.ui as ui
 from typing import List
 from objects.items import Item
 import random
+import math
 
 
 def generate_stats(power_level, block_size=0.25, movement_count=1000):
@@ -20,7 +21,7 @@ def generate_stats(power_level, block_size=0.25, movement_count=1000):
         
         stats[j] -= block_size
         stats[k] += block_size
-    return [ round(x * power_level) for x in stats ]
+    return [ math.ceil(x * power_level) for x in stats ]
 
 
 class Fightable():

@@ -11,7 +11,7 @@ def bar(hp, max_hp, scale=1, full=':heart:', portion=':broken_heart:', empty=':b
     return f"{full * math.floor(hp) + portion * (hp % 1 > 0) + empty * math.floor(max_hp - hp)}"
 
 
-def tiered_bar(hp, max_hp, tiers=None, upgrade_level=10):
+def tiered_bar(hp, max_hp, tiers=None, upgrade_level=5):
     if tiers is None:
         tiers = [
             ":black_heart:",
@@ -21,7 +21,6 @@ def tiered_bar(hp, max_hp, tiers=None, upgrade_level=10):
             ":green_heart:",
             ":blue_heart:",
             ":purple_heart:",
-            ":shield:",
             ":red_square:",
             ":orange_square:",
             ":yellow_square:",
@@ -53,9 +52,6 @@ def tiered_bar(hp, max_hp, tiers=None, upgrade_level=10):
     if max_hp < upgrade_level:
         level_nhp = max_hp - level_hp
     
-    print(level + 1)
-    print(nlevel + 1)
-    print(len(tiers))
     return tiers[level + 1] * level_hp + tiers[nlevel + 1] * level_nhp
     
 

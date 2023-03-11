@@ -59,11 +59,33 @@ class Battle():
             await self.display_text(f"{self.interaction.user.mention} has won!", color=Battle.GREEN)
     
     async def analyze(self):
+        if self.enemy.max_hp > 50:
+            hlth = ":heart: x" + str(self.enemy.max_hp // 5 + 1)
+        else:
+            hlth = ":heart:"   *    (self.enemy.max_hp // 5 + 1)
+        
+        if self.enemy.strength > 10:
+            strngth = ":star: x" + str(self.enemy.strength + 1)
+        else:
+            strngth = ":star:"   *    (self.enemy.strength + 1)
+            
+        if self.enemy.defense > 10:
+            dfns = ":shield: x" + str(self.enemy.defense + 1)
+        else:
+            dfns = ":shield:"   *    (self.enemy.defense + 1)
+            
+        if self.enemy.speed > 10:
+            spd = ":athletic_shoe: x" + str(self.enemy.speed + 1)
+        else:
+            spd = ":athletic_shoe:"   *    (self.enemy.speed + 1)
+            
         await self.display_embed([
-            ( "STRENGTH", ":star:"          * (1 + self.enemy.strength) ),
-            ( "DEFENSE" , ":shield:"        * (1 + self.enemy.defense)  ),
-            ( "SPEED"   , ":athletic_shoe:" * (1 + self.enemy.speed)    ),
-        ], title=self.enemy.name, inline=True)
+            ( "HEALTH"  , hlth   , True  ),
+            ( "STRENGTH", strngth, True  ),
+            ( ""        , ""     , False ),
+            ( "DEFENSE" , dfns   , True  ),
+            ( "SPEED"   , spd    , True  ),
+        ], title=self.enemy.name)
         await self.wait_for_ok() 
     
     async def attack(self):
@@ -171,9 +193,14 @@ class Battle():
         if not keep_view:
             await self.display_view(None)
         
-    async def display_embed(self, fields: List[Tuple[str, str]], color: int = 0xf1c40f, keep_view=False, title=None, inline=False):
+    async def display_embed(self, fields: List[Tuple[str, str]], color: int = 0xf1c40f, keep_view=False, title=None):
         embed = nextcord.Embed(color=color, title=title)
-        for (name, value) in fields:
+        for field in fields:
+            if len(field) == 3:
+                name, value, inline = field
+            else:
+                name, value = field
+                inline = False
             embed.add_field(name=name, value=value, inline=inline)
         await self.message.edit(embed=embed)
         

@@ -1,9 +1,10 @@
 from typing import List
-from objects.items import Item, Sword, HealthPotion, Crystal
+from objects.items import Item
 from objects.entities import Enemy, generate_stats
 import math
 import random
 from objects.storage import Storage
+from objects.loot_tables import dungeon_chest_tables
 
 
 class Chest:
@@ -89,16 +90,15 @@ class Room:
         
         # Generates chests in random positions
         chest_count = random.randint(0, min(len(open_spaces), 2))
+        loot_level = min(loot_tier - 1, 5)
+        loot_table = dungeon_chest_tables[loot_level]
+        bonus_rolls = loot_tier - loot_level - 1
         for _ in range(chest_count):
             x, y = random_space()
             
             # Fixed loot for now
-            # TODO Loot tables
-            chest = Chest(
-                Sword(), 
-                HealthPotion(), HealthPotion(),
-                Crystal()
-            )
+            rolls = random.randint(2, 5)
+            chest = Chest(*[ loot_table.drop()() for _ in range(rolls + bonus_rolls) ])
             
             self.layout[x + y * size] = Tile(TileType.CHEST, chest)
             

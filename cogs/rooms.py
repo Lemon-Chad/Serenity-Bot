@@ -5,7 +5,7 @@ from nextcord.ext import commands
 from objects.rooms import Room, TileType
 from ui.character import CharacterView
 from ui.rooms import RoomView
-from objects import items
+from items import weapons, consumables, trinkets
 from objects.context import RPGContext
 from objects.entities import DisCharacter
 from events.dungeon import Dungeon
@@ -22,11 +22,10 @@ class RoomCommands(commands.Cog):
     async def test_dungeon(self, interaction: Interaction, loot_tier: int, danger_tier: int):
         p = DisCharacter(20, 5, 3, 2, 10, interaction.user)
         p.inventory = [
-            items.Sword(),
-            items.Sword(),
-            items.HealthPotion(),
-            items.HealthPotion(),
-            items.Crystal(),
+            weapons.StandardSword(),
+            consumables.HealthPotion(),
+            consumables.HealthPotion(),
+            trinkets.Crystal(),
         ]
         
         dungeon = Dungeon(p, interaction, loot_tier=loot_tier, danger_tier=danger_tier)

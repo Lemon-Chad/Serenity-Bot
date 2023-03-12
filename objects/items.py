@@ -60,16 +60,11 @@ class GenericItem(Item):
         return ItemUseResponse.fail("Generic Item Use")
 
 
-class Crystal(GenericItem):
-    def __init__(self) -> None:
-        super().__init__("Crystal", "A valuable crystal worth selling.", '💎', 50)
-
-
 class Weapon(Item):
     stats: Stats
     
     def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
-        super().__init__(name, description, emoji, ItemType.WEAPON, 1)
+        super().__init__(name, description, emoji, ItemType.WEAPON, 2)
         self.stats = stats
         
         self.slot[EquipSlots.MAINHAND] = True
@@ -79,24 +74,33 @@ class Weapon(Item):
         return ItemUseResponse.fail("Weapon Type Item")
 
 
-class Sword(Weapon):
-    def __init__(self) -> None:
-        super().__init__("Sword", "+2 Strength", "🗡️", Stats(0, 0, 2, 0))
-
-
 class Consumable(Item):
     def __init__(self, name: str, description: str, emoji: str) -> None:
-        super().__init__(name, description, emoji, ItemType.CONSUMABLE, 1)
+        super().__init__(name, description, emoji, ItemType.CONSUMABLE, 3)
 
 
-class HealthPotion(Consumable):
-    def __init__(self) -> None:
-        super().__init__("Health Potion", "Heals 2 HP", "🧪")
+class Helmet(Item):
+    stats: Stats
     
-    async def on_use(self, context) -> ItemUseResponse:
-        player = context.player
-        if player.hp >= player.max_hp:
-            return ItemUseResponse.fail("Player is already at Max HP!")
-        player.hp = min(player.hp + 2, player.max_hp)
-        return ItemUseResponse.ok("Healed 2 HP!")
+    def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
+        super().__init__(name, description, emoji, ItemType.ARMOR, 2)
+        self.stats = stats
+        
+        self.slot[EquipSlots.HELMET] = True
+
+    async def on_use(self, _) -> ItemUseResponse:
+        return ItemUseResponse.fail("Armor Type Item")
+
+
+class Armor(Item):
+    stats: Stats
+    
+    def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
+        super().__init__(name, description, emoji, ItemType.ARMOR, 3)
+        self.stats = stats
+        
+        self.slot[EquipSlots.ARMOR] = True
+
+    async def on_use(self, _) -> ItemUseResponse:
+        return ItemUseResponse.fail("Armor Type Item")
 

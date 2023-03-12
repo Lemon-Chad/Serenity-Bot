@@ -92,6 +92,7 @@ class DisCharacter(Fightable):
         self.defense += stats.defense
         self.strength += stats.strength
         self.speed += stats.speed
+        self.luck += stats.luck
     
     def remove_stats(self, stats: Stats):
         self.max_hp -= stats.health * 5
@@ -99,6 +100,7 @@ class DisCharacter(Fightable):
         self.defense -= stats.defense
         self.strength -= stats.strength
         self.speed -= stats.speed
+        self.luck -= stats.luck
     
     def equip(self, *, mainhand=None, offhand=None, helmet=None, armor=None):
         if mainhand:

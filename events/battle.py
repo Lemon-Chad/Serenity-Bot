@@ -46,6 +46,8 @@ class Battle():
             
             elif action_view.choice == BattleActions.INVENTORY:
                 await self.inventory()
+                if self.enemy.hp <= 0 or self.player.hp <= 0:
+                    break
                 
             elif action_view.choice == BattleActions.ANALYZE:
                 await self.analyze()

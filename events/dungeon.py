@@ -52,7 +52,7 @@ class Dungeon():
                 add_lost_gear(item)
             
             for item in self.player.inventory:
-                self.player.drop(item)
+                self.player.drop_item(item)
             
             self.player.hp = self.player.max_hp
         return val

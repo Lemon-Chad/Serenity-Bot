@@ -3,6 +3,7 @@ from nextcord import Interaction
 from nextcord.ext import commands
 import objects.entities
 import ui.helper
+import objects.loot_tables
 
 
 with open("token.txt", "r") as f:
@@ -14,7 +15,8 @@ TESTING_GUILDS = [658882526470864896, 811033467139784734, 1082795791476858980]
 client = commands.Bot()
 
 extensions = [
-    "fight"
+    "fight",
+    "rooms"
 ]
 
 if __name__ == "__main__":
@@ -37,7 +39,6 @@ async def generate_stats(interaction: Interaction, power_lvl: int):
     
 @client.slash_command(name="generatebar", description="Generates an HP bar", guild_ids=TESTING_GUILDS)
 async def generate_bar(interaction: Interaction, hp: int, max_hp: int):
-    await interaction.send(str(ui.helper.tiered_bar(hp, max_hp)))
-
+    await interaction.send(str(ui.helper.tiered_bar(hp, max_hp, number=True)))
 
 client.run(token)

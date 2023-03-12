@@ -11,7 +11,27 @@ def bar(hp, max_hp, scale=1, full=':heart:', portion=':broken_heart:', empty=':b
     return f"{full * math.floor(hp) + portion * (hp % 1 > 0) + empty * math.floor(max_hp - hp)}"
 
 
-def tiered_bar(hp, max_hp, tiers=None, upgrade_level=5):
+def item_select_options(item_list):
+    select_options = []
+    for i, item in enumerate(item_list):
+        select_options.append(nextcord.SelectOption(
+            label=item.name,
+            description=item.description,
+            emoji=item.emoji,
+            value=str(i)
+        ))
+    
+    if not select_options:
+        select_options.append(nextcord.SelectOption(
+            label="Nothing",
+            value="-1",
+            description="It's nothing",
+            emoji='🕸️'
+        ))
+    return select_options
+
+
+def tiered_bar(hp, max_hp, tiers=None, upgrade_level=5, number=False):
     if tiers is None:
         tiers = [
             ":black_heart:",
@@ -52,7 +72,7 @@ def tiered_bar(hp, max_hp, tiers=None, upgrade_level=5):
     if max_hp < upgrade_level:
         level_nhp = max_hp - level_hp
     
-    return tiers[level + 1] * level_hp + tiers[nlevel + 1] * level_nhp
+    return tiers[level + 1] * level_hp + tiers[nlevel + 1] * level_nhp + f' {hp}/{max_hp}' * number
     
 
 

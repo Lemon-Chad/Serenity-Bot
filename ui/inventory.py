@@ -2,6 +2,7 @@ from nextcord import ui, Interaction
 import objects.context as rpgctx
 import nextcord
 from objects import items
+from ui.helper import item_select_options
 
 
 class InventoryView(ui.View):
@@ -15,15 +16,7 @@ class InventoryView(ui.View):
         self.response = None
         self.ctx = ctx
         
-        select_options = []
-        for i, item in enumerate(ctx.player.inventory):
-            item: items.Item
-            select_options.append(nextcord.SelectOption(
-                label=item.name,
-                description=item.description,
-                emoji=item.emoji,
-                value=str(i)
-            ))
+        select_options = item_select_options(ctx.player.inventory)
         
         self.dropdown = ui.Select(placeholder="Choose an Item", options=select_options, max_values=1)
         self.dropdown.callback = self.use_item
@@ -40,6 +33,8 @@ class InventoryView(ui.View):
         inv = self.ctx.player.inventory
         iter_inv = inv[:]
         for i in self.dropdown.values:
+            if i == "-1":
+                return
             item: items.Item = iter_inv[int(i)]
             self.response = await item.on_use(self.ctx)
             if self.response.used:

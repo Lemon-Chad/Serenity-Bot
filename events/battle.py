@@ -28,13 +28,13 @@ class Battle():
         self.enemy = enemy
         self.interaction = interaction
     
-    async def main(self):
-        self.message = await self.interaction.followup.send("** **")
+    async def main(self) -> bool:
+        self.message = await self.interaction.followup.send("** **", ephemeral=True)
         
         while self.player.hp > 0 and self.enemy.hp > 0:
             await self.display_embed([
-                (self.player.name, tiered_bar(self.player.hp, self.player.max_hp)),
-                (self.enemy.name, tiered_bar(self.enemy.hp, self.enemy.max_hp))
+                (self.player.name, tiered_bar(self.player.hp, self.player.max_hp, number=True)),
+                (self.enemy.name, tiered_bar(self.enemy.hp, self.enemy.max_hp, number=True))
             ])
             action_view = ActionView()
             await self.display_view(action_view)
@@ -57,6 +57,10 @@ class Battle():
             await self.display_text(f"{self.interaction.user.mention} has lost!", color=Battle.RED)
         elif self.enemy.hp <= 0:
             await self.display_text(f"{self.interaction.user.mention} has won!", color=Battle.GREEN)
+            
+        await self.wait_for_ok()
+        await self.message.delete()
+        return self.player.hp > 0
     
     async def analyze(self):
         if self.enemy.max_hp > 50:
@@ -80,7 +84,7 @@ class Battle():
             spd = ":athletic_shoe:"   *    (self.enemy.speed + 1)
             
         await self.display_embed([
-            ( "HEALTH"  , hlth   , True  ),
+            ( "VITALITY"  , hlth   , True  ),
             ( "STRENGTH", strngth, True  ),
             ( ""        , ""     , False ),
             ( "DEFENSE" , dfns   , True  ),
@@ -109,7 +113,7 @@ class Battle():
         await asyncio.sleep(random.random() * 1.5 + 1)
         
         # Critical hit
-        event = QuicktimeEvent(1, 
+        event = QuicktimeEvent(2, 
                                 nextcord.ButtonStyle.success, 
                                 nextcord.ButtonStyle.secondary,
                                 '🌟',
@@ -136,7 +140,7 @@ class Battle():
         await self.display_text("The enemy prepares their attack...")
         await asyncio.sleep(random.random() * 1.5 + 1)
         
-        event = QuicktimeEvent(1,
+        event = QuicktimeEvent(2,
                                 nextcord.ButtonStyle.success, 
                                 nextcord.ButtonStyle.secondary,
                                 '🔄',

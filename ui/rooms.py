@@ -32,6 +32,7 @@ class RoomAction:
 class RoomView(ui.View):
     STYLE_GUIDE = {
         TileType.CHEST      : ButtonStyle.green,
+        TileType.BAG        : ButtonStyle.green,
         TileType.ENEMY      : ButtonStyle.red,
         TileType.ENEMY_DOOR : ButtonStyle.red,
         TileType.WALL       : ButtonStyle.blurple,
@@ -42,6 +43,7 @@ class RoomView(ui.View):
         TileType.ENEMY_DOOR : '💀',
         TileType.DOOR       : '🚪',
         TileType.EXIT       : '🚀',
+        TileType.BAG        : '💰',
     }
     
     room: Room
@@ -88,7 +90,7 @@ class RoomView(ui.View):
             self.set_action(RoomActions.NEXT, x, y)
         elif tile.tile_type == TileType.ENEMY or tile.tile_type == TileType.ENEMY_DOOR:
             self.set_action(RoomActions.FIGHT, x, y, tile.contents)
-        elif tile.tile_type == TileType.CHEST:
+        elif tile.tile_type == TileType.CHEST or tile.tile_type == TileType.BAG:
             self.set_action(RoomActions.LOOT_CHEST, x, y, tile.contents)
         elif tile.tile_type == TileType.EXIT:
             self.set_action(RoomActions.EXIT, x, y)

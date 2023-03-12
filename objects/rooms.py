@@ -10,8 +10,8 @@ from objects.loot_tables import dungeon_chest_tables
 class Chest:
     contents: Storage
     
-    def __init__(self, *contents: List[Item]):
-        self.contents = Storage("Chest", 25, *contents)
+    def __init__(self, *contents: List[Item], name: str = "Chest"):
+        self.contents = Storage(name, 25, *contents)
 
 
 class TileType:
@@ -22,6 +22,7 @@ class TileType:
     DOOR  = 4
     EXIT  = 5
     ENEMY_DOOR = 6
+    BAG = 7
     
     
 class Tile:
@@ -72,7 +73,7 @@ class Room:
         
         # Enemy count based on danger
         min_enemies = round(0.5 * (danger_tier - 1))
-        max_enemies = min_enemies + math.ceil(danger_tier / 6)
+        max_enemies = min_enemies + math.ceil(danger_tier / 3)
         enemy_count = min(len(open_spaces), random.randint(min_enemies, max_enemies))
         
         # Generates enemies in random positions
@@ -90,21 +91,23 @@ class Room:
         
         # Generates chests in random positions
         chest_count = random.randint(0, min(len(open_spaces), 2))
-        loot_level = min(loot_tier - 1, 5)
-        loot_table = dungeon_chest_tables[loot_level]
-        bonus_rolls = loot_tier - loot_level - 1
         for _ in range(chest_count):
             x, y = random_space()
             
-            # Fixed loot for now
-            rolls = random.randint(2, 5)
-            chest = Chest(*[ loot_table.drop()() for _ in range(rolls + bonus_rolls) ])
+            chest = Chest(*self.get_loot(loot_tier))
             
             self.layout[x + y * size] = Tile(TileType.CHEST, chest)
             
         # Fill in rest of tiles with empty spaces
         for x, y in open_spaces:
             self.layout[x + y * size] = Tile(TileType.EMPTY)
+
+    def get_loot(self, tier) -> List[Item]:
+        loot_level = min(tier - 1, 5)
+        loot_table = dungeon_chest_tables[loot_level]
+        bonus_rolls = tier - loot_level - 1
+        rolls = random.randint(2, 5)
+        return [ loot_table.drop()() for _ in range(rolls + bonus_rolls) ]
 
     def get_tile(self, x, y) -> Tile:
         return self.layout[x + y * self.size]
@@ -113,5 +116,7 @@ class Room:
         i = x + y * self.size
         if self.layout[i].tile_type == TileType.ENEMY_DOOR:
             self.layout[i] = Tile(TileType.DOOR)
+        elif self.layout[i].tile_type == TileType.ENEMY:
+            self.layout[i] = Tile(TileType.BAG, Chest(*self.get_loot(self.loot + 1), name=self.layout[i].contents.name))
         else:
             self.layout[i] = Tile(TileType.EMPTY)

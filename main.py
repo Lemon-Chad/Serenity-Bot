@@ -14,7 +14,7 @@ with open("token.txt", "r") as f:
 TESTING_GUILDS = [658882526470864896, 811033467139784734, 1082795791476858980]
 
 
-class Bot(commands.Bot):
+class Client(commands.Bot):
     async def async_cleanup(self):
         data.save_data()
         save_task.stop()
@@ -25,7 +25,7 @@ class Bot(commands.Bot):
         await super().close()
 
 
-client = Bot()
+client = Client()
 
 extensions = [
     "fight",

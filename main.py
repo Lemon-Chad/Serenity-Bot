@@ -1,9 +1,10 @@
 import nextcord
 from nextcord import Interaction
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 import objects.entities
 import ui.helper
 import objects.loot_tables
+import data
 
 
 with open("token.txt", "r") as f:
@@ -12,7 +13,19 @@ with open("token.txt", "r") as f:
 
 TESTING_GUILDS = [658882526470864896, 811033467139784734, 1082795791476858980]
 
-client = commands.Bot()
+
+class Bot(commands.Bot):
+    async def async_cleanup(self):
+        data.save_data()
+        save_task.stop()
+    
+    async def close(self):
+        await self.async_cleanup()
+        
+        await super().close()
+
+
+client = Bot()
 
 extensions = [
     "fight",
@@ -41,4 +54,18 @@ async def generate_stats(interaction: Interaction, power_lvl: int):
 async def generate_bar(interaction: Interaction, hp: int, max_hp: int):
     await interaction.send(str(ui.helper.tiered_bar(hp, max_hp, number=True)))
 
+
+@commands.is_owner()
+@client.slash_command(name="shutdown", description="Stops the bot.", guild_ids=TESTING_GUILDS)
+async def shutdown(interaction: Interaction):
+    await interaction.send("Shutting down.", ephemeral=True)
+    await client.close()
+
+
+@tasks.loop(hours=6.0)
+async def save_task():
+    data.save_data()
+
+
+save_task.start()
 client.run(token)

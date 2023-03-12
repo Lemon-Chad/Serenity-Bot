@@ -22,19 +22,19 @@ class CrystalAlloy(GenericItem):
 
 class PlatinumAlloy(GenericItem):
     def __init__(self) -> None:
-        super().__init__("Crystal Alloy", "A resilient platinum alloy", '🪨', 50)
+        super().__init__("Platinum Alloy", "A resilient platinum alloy", '🪨', 50)
 
 
 class TitaniumAlloy(GenericItem):
     def __init__(self) -> None:
-        super().__init__("Crystal Alloy", "An incredible titanium alloy", '🪨', 65)
+        super().__init__("Titanium Alloy", "An incredible titanium alloy", '🪨', 65)
 
 
 class MysticAlloy(GenericItem):
     def __init__(self) -> None:
-        super().__init__("Crystal Alloy", "An enticing mystical alloy", '🪨', 85)
+        super().__init__("Mystic Alloy", "An enticing mystical alloy", '🪨', 85)
 
 
 class ExoticAlloy(GenericItem):
     def __init__(self) -> None:
-        super().__init__("Crystal Alloy", "An iridescent exotic alloy", '🪨', 100)
+        super().__init__("Exotic Alloy", "An iridescent exotic alloy", '🪨', 100)

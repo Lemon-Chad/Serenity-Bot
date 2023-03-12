@@ -1,7 +1,7 @@
 from nextcord import ui, Interaction
 import objects.context as rpgctx
 import nextcord
-from objects import items
+from objects.items import ItemType
 from ui.helper import item_select_options
 
 
@@ -16,7 +16,7 @@ class InventoryView(ui.View):
         self.response = None
         self.ctx = ctx
         
-        select_options = item_select_options(ctx.player.inventory)
+        select_options = item_select_options([ item for item in self.ctx.player.inventory if item.item_type == ItemType.CONSUMABLE ])
         
         self.dropdown = ui.Select(placeholder="Choose an Item", options=select_options, max_values=1)
         self.dropdown.callback = self.use_item

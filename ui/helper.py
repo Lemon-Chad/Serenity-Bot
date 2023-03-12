@@ -13,12 +13,12 @@ def bar(hp, max_hp, scale=1, full=':heart:', portion=':broken_heart:', empty=':b
 
 def item_select_options(item_list):
     select_options = []
-    for i, item in enumerate(item_list):
+    for item in sorted(item_list, key=lambda x: x.name):
         select_options.append(nextcord.SelectOption(
             label=item.name,
             description=item.description,
             emoji=item.emoji,
-            value=str(i)
+            value=str(item_list.index(item))
         ))
     
     if not select_options:

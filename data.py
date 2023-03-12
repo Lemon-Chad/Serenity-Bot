@@ -7,12 +7,24 @@ if os.path.exists("storage.dat"):
         _data = pickle.load(f)
 else:
     _data = {
-        "accounts": {}
+        "accounts": {},
+        "lost_gear": []
     }
 
 
 def get_account(user_id: int):
     return _data[user_id]
+
+
+def find_lost_gear(user_id: int):
+    applicable = [ x for x in _data["lost_gear"] if x.lost_owner != user_id ]
+    if not applicable:
+        return None
+    return applicable[0]
+
+
+def add_lost_gear(item):
+    _data["lost_gear"].append(item)
 
 
 def create_account(user_id: int, acc):

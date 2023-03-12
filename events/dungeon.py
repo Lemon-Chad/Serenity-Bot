@@ -9,6 +9,7 @@ from objects.rooms import Chest, Room
 from ui.rooms import RoomView, RoomActions
 from events.battle import Battle
 from ui.storage import StorageView
+from data import add_lost_gear
 
 
 class Dungeon():
@@ -41,6 +42,22 @@ class Dungeon():
         self.room_count += 1
     
     async def main(self) -> bool:
+        val = await self.main_dungeon()
+        if not self.survived:
+            # Drop all gear
+            # Forged gear loot tables
+            forged = [ item for item in self.player.inventory if item.forged ]
+            for item in forged:
+                item.lost_owner = self.player.owner.id
+                add_lost_gear(item)
+            
+            for item in self.player.inventory:
+                self.player.drop(item)
+            
+            self.player.hp = self.player.max_hp
+        return val
+        
+    async def main_dungeon(self) -> bool:
         self.message = await self.interaction.followup.send("** **")
         
         fog_approaching = False

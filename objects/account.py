@@ -8,6 +8,7 @@ class Account:
     player: DisCharacter
     user: nextcord.User
     stash: Storage
+    money: int
     
     def __init__(self, user: nextcord.User) -> None:
         self.user = user
@@ -15,4 +16,6 @@ class Account:
         
         self.stash = Storage("Stash", 50)
         self.player = DisCharacter(10, 0, 0, 0, 5, self.user)
+        
+        self.money = 0
         

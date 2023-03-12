@@ -34,6 +34,8 @@ class Item(ABC):
     item_type: int
     value: int
     slot: List[bool]
+    lost_owner: int
+    forged: bool
     
     def __init__(self, name: str, description: str, emoji: str, item_type: int, value: int) -> None:
         self.name = name
@@ -42,6 +44,8 @@ class Item(ABC):
         self.item_type = item_type
         self.value = value
         self.slot = [False, False, False, False]
+        self.lost_owner = None
+        self.forged = False
         
     @abstractmethod
     async def on_use(self, context) -> ItemUseResponse:

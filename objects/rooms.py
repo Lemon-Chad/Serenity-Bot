@@ -67,7 +67,7 @@ class Room:
             open_doors.append((x, y))
             
         # Exit
-        if random.random() < 0.05:
+        if random.random() < 0.5:
             x, y = random_space()
             self.layout[x + y * size] = Tile(TileType.EXIT)
         

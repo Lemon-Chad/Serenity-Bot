@@ -12,8 +12,12 @@ else:
     }
 
 
+def has_account(user_id: int):
+    return user_id in _data["accounts"]
+
+
 def get_account(user_id: int):
-    return _data[user_id]
+    return _data["accounts"][user_id]
 
 
 def find_lost_gear(user_id: int):
@@ -28,9 +32,15 @@ def add_lost_gear(item):
 
 
 def create_account(user_id: int, acc):
-    _data[user_id] = acc
+    _data["accounts"][user_id] = acc
 
 
 def save_data():
+    for acc in _data["accounts"].values():
+        acc.in_dungeon = False
     with open("storage.dat", "wb+") as f:
         pickle.dump(_data, f)
+
+
+if __name__ == "__main__":
+    save_data()

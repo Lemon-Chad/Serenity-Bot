@@ -16,7 +16,11 @@ class InventoryView(ui.View):
         self.response = None
         self.ctx = ctx
         
-        select_options = item_select_options([ item for item in self.ctx.player.inventory if item.item_type == items.ItemType.CONSUMABLE ])
+        select_options = item_select_options([ 
+            item 
+            for item in self.ctx.player.inventory 
+            if item.item_type == items.ItemType.CONSUMABLE
+        ], val=lambda x: self.ctx.player.inventory.index(x))
         
         self.dropdown = ui.Select(placeholder="Choose an Item", options=select_options, max_values=1)
         self.dropdown.callback = self.use_item

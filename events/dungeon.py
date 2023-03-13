@@ -48,31 +48,30 @@ class Dungeon():
             # Forged gear loot tables
             forged = [ item for item in self.player.inventory if item.forged ]
             for item in forged:
-                item.lost_owner = self.player.owner.id
+                item.lost_owner = self.player.owner
                 add_lost_gear(item)
             
-            for item in self.player.inventory:
+            for item in self.player.inventory[:]:
                 self.player.drop_item(item)
             
             self.player.hp = self.player.max_hp
         return val
         
     async def main_dungeon(self) -> bool:
-        self.message = await self.interaction.followup.send("** **")
+        self.message = await self.interaction.followup.send("** **", ephemeral=True)
         
         fog_approaching = False
         while True:
             room_view = RoomView(self.room, fog_approaching=fog_approaching)
             if fog_approaching:
-                await self.display_title(f"You will die to the fog soon!", color=Dungeon.RED)
+                await self.display_title("You will die to the fog soon", color=Dungeon.RED)
             else:
                 await self.display_title(f"Room #{self.room_count}")
             await self.display_view(room_view)
             await room_view.wait()
             
             if room_view.action.action == RoomActions.EXIT:
-                await self.display_text("You escaped the dungeon.", color=Dungeon.GREEN)
-                await self.wait_for_ok()
+                await self.display_text("You escaped the dungeon", color=Dungeon.GREEN)
                 self.survived = True
                 return True
             
@@ -83,8 +82,7 @@ class Dungeon():
                 battle = Battle(self.player, room_view.action.payload, self.interaction)
                 survival = await battle.main()
                 if not survival:
-                    await self.display_text("You perished in the dungeon.", color=Dungeon.RED)
-                    await self.wait_for_ok()
+                    await self.display_text("You perished in the dungeon", color=Dungeon.RED)
                     return False
                 if room_view.action.payload.hp <= 0:
                     room_view.clear_tile(room_view.action.x, room_view.action.y)
@@ -99,7 +97,7 @@ class Dungeon():
                 fog_approaching = True
             
             elif room_view.action.action == RoomActions.DIE:
-                await self.display_text("You perished to the fog.", color=Dungeon.RED)
+                await self.display_text("You perished to the fog", color=Dungeon.RED)
                 return False
     
     async def character(self):

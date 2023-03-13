@@ -58,7 +58,7 @@ class RoomView(ui.View):
             for x in range(room.size):
                 tile = room.get_tile(x, y)
                 button = ui.Button(
-                    label="\u200b",
+                    label=None if tile.tile_type in RoomView.EMOJI_GUIDE else "\u200b",
                     emoji=RoomView.EMOJI_GUIDE.get(tile.tile_type,       None      ),
                     style=RoomView.STYLE_GUIDE.get(tile.tile_type, ButtonStyle.gray),
                     row=y,

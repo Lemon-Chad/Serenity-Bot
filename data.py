@@ -38,6 +38,7 @@ def create_account(user_id: int, acc):
 def save_data():
     for acc in _data["accounts"].values():
         acc.in_dungeon = False
+    print(_data)
     with open("storage.dat", "wb+") as f:
         pickle.dump(_data, f)
 

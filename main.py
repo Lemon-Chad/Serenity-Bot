@@ -24,7 +24,7 @@ def find_account(interaction: Interaction) -> Account:
     user_id = interaction.user.id
     if not data.has_account(user_id):
         acc = Account(interaction.user)
-        data.create_account(user_id, acc)
+        data.create_account(acc.user, acc)
     return data.get_account(user_id)
 
 
@@ -93,7 +93,11 @@ async def stash(interaction: Interaction):
     acc = find_account(interaction)
     
     if acc.in_dungeon:
-        await interaction.send("Cannot access stash in dungeon!")
+        await interaction.send(embed=simple_embed(
+            "Stash", 
+            "Cannot access stash in dungeon",
+            Colors.RED
+        ))
         return
     
     msg = await interaction.send("** **")
@@ -109,7 +113,11 @@ async def character(interaction: Interaction):
     acc = find_account(interaction)
     
     if acc.in_dungeon:
-        await interaction.send("Cannot access character in dungeon!")
+        await interaction.send(embed=simple_embed(
+            "Character", 
+            "Cannot access character in dungeon",
+            Colors.RED
+        ))
         return
     
     msg = await interaction.send("** **")
@@ -126,24 +134,28 @@ async def adventure(interaction: Interaction, difficulty: int = nextcord.SlashOp
         "⭐": 1,
         "⭐⭐": 2,
         "⭐⭐⭐": 3,
-        "⭐⭐⭐⭐": 4,
-        "⭐⭐⭐⭐⭐": 5,
-        "🌟🌟🌟🌟🌟🌟": 6
+        "🌟": 4,
+        "🌟🌟": 5,
+        "🌟🌟🌟": 6
     }
 )):
     acc = find_account(interaction)
     
     if acc.in_dungeon:
-        await interaction.send("You are already in a dungeon!")
+        await interaction.send(embed=simple_embed(
+            "Dungeon", 
+            "You are already in a dungeon",
+            Colors.RED
+        ), ephemeral=True)
         return
     
     tiers = [
         "⭐",
         "⭐⭐",
         "⭐⭐⭐",
-        "⭐⭐⭐⭐",
-        "⭐⭐⭐⭐⭐",
-        "🌟🌟🌟🌟🌟🌟",
+        "🌟",
+        "🌟🌟",
+        "🌟🌟🌟",
     ]
     
     await interaction.send(embed=simple_embed(
@@ -163,6 +175,15 @@ async def adventure(interaction: Interaction, difficulty: int = nextcord.SlashOp
     acc.in_dungeon = True
     await dungeon.main()
     acc.in_dungeon = False
+
+    embed = nextcord.Embed(title="Dungeon")
+    if dungeon.survived:
+        embed.color = Dungeon.GREEN
+        embed.description = f"{interaction.user.mention} escaped a dungeon after {dungeon.room_count} rooms"
+    else:
+        embed.color = Dungeon.RED
+        embed.description = f"{interaction.user.mention} perished in a dungeon after {dungeon.room_count} rooms"
+    await interaction.send(embed=embed, ephemeral=False)
 
 
 @tasks.loop(hours=6.0)

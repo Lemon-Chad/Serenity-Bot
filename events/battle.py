@@ -41,7 +41,7 @@ class Battle():
             await action_view.wait()
             
             if action_view.choice == BattleActions.RUN:
-                await self.display_text(f"{self.interaction.user.mention} has fled the battle!", color=Battle.RED)
+                await self.display_text(f"{self.interaction.user.mention} has fled the battle", color=Battle.RED)
                 break
             
             elif action_view.choice == BattleActions.INVENTORY:
@@ -56,9 +56,9 @@ class Battle():
                 await self.attack()
         
         if self.player.hp <= 0:
-            await self.display_text(f"{self.interaction.user.mention} has lost!", color=Battle.RED)
+            await self.display_text(f"{self.interaction.user.mention} has lost", color=Battle.RED)
         elif self.enemy.hp <= 0:
-            await self.display_text(f"{self.interaction.user.mention} has won!", color=Battle.GREEN)
+            await self.display_text(f"{self.interaction.user.mention} has won", color=Battle.GREEN)
             
         await self.wait_for_ok()
         await self.message.delete()
@@ -157,10 +157,10 @@ class Battle():
             if event.success:
                 dodge_chance = 0.1 + 0.8 / (1 + math.exp(-4.6 * ((self.player.speed + 1) / (self.enemy.speed + 1) - 1)))
                 if random.random() < dodge_chance:
-                    await self.display_text(f"You fully dodged the attack!", color=Battle.GREEN)
+                    await self.display_text("You fully dodged the attack!", color=Battle.GREEN)
                 else:
                     dmg = self.player.damage(self.enemy.strength)
-                    await self.display_text(f"You partially dodged the attack, but the enemy was faster.\nThe enemy dealt **{dmg} damage!**", color=Battle.GREEN)
+                    await self.display_text(f"You partially dodged the attack, but the enemy was faster.\nThe enemy dealt **{dmg} damage!**", color=Battle.GOLD)
             else:
                 dmg = self.player.damage(self.enemy.strength)
                 await self.display_text(f"You fumbled, and the enemy dealt **{dmg} damage!**")

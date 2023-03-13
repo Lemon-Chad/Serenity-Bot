@@ -11,14 +11,16 @@ def bar(hp, max_hp, scale=1, full=':heart:', portion=':broken_heart:', empty=':b
     return f"{full * math.floor(hp) + portion * (hp % 1 > 0) + empty * math.floor(max_hp - hp)}"
 
 
-def item_select_options(item_list):
+def item_select_options(item_list, val=None):
+    if val is None:
+        val = lambda x: item_list.index(x)
     select_options = []
     for item in sorted(item_list, key=lambda x: x.name):
         select_options.append(nextcord.SelectOption(
             label=item.name,
             description=item.description,
             emoji=item.emoji,
-            value=str(item_list.index(item))
+            value=str(val(item))
         ))
     
     if not select_options:

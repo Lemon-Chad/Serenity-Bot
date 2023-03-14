@@ -42,7 +42,7 @@ class Room:
     loot: int
     player: DisCharacter
     
-    def __init__(self, player: DisCharacter, loot_tier=1, danger_tier=1, size=4):
+    def __init__(self, player: DisCharacter, loot_tier=1, danger_tier=1, size=4, spawn_room=False):
         self.size = size
         self.loot = loot_tier
         self.layout = [ None for _ in range(size * size) ]
@@ -70,7 +70,7 @@ class Room:
             open_doors.append((x, y))
             
         # Exit
-        if random.random() < 0.5:
+        if random.random() < 0.05 and not spawn_room:
             x, y = random_space()
             self.layout[x + y * size] = Tile(TileType.EXIT)
         
@@ -93,7 +93,7 @@ class Room:
             self.layout[x + y * size] = Tile(tile_type, Enemy(hp * 5, defense, strength, speed))
         
         # Generates chests in random positions
-        chest_count = random.randint(2, min(len(open_spaces), 5))
+        chest_count = random.randint(0, min(len(open_spaces), 3)) + spawn_room * 2
         for _ in range(chest_count):
             x, y = random_space()
             
@@ -116,7 +116,7 @@ class Room:
         loot = [ loot_table.drop()() for _ in range(rolls + bonus_rolls) ]
         
         # Add lost player loot
-        if random.random() < 0.5:
+        if random.random() < 0.05:
             loot.append(find_lost_gear(
                 self.player.owner, 
                 dungeon_chest_forge_levels[loot_level][0] + bonus_rolls,

@@ -24,7 +24,7 @@ def get_account(user_id: int):
 
 
 def find_lost_gear(user_id: int, min_level: int, max_level: int):
-    applicable = [ x for x in _data["lost_gear"] if x.lost_owner == user_id and min_level <= x.forge_level <= max_level ]
+    applicable = [ x for x in _data["lost_gear"] if x.lost_owner != user_id and min_level <= x.forge_level <= max_level ]
     if not applicable:
         return None
     i = applicable[0]

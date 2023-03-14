@@ -39,7 +39,12 @@ class Dungeon():
         self.survived = False
         
     def generate_room(self):
-        self.room = Room(player=self.player, loot_tier=self.loot_tier, danger_tier=self.danger_tier)
+        self.room = Room(
+            player=self.player, 
+            loot_tier=self.loot_tier, 
+            danger_tier=self.danger_tier, 
+            spawn_room=self.room_count == 0
+        )
         self.room_count += 1
     
     async def main(self) -> bool:

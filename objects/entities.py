@@ -126,9 +126,7 @@ class DisCharacter(Fightable):
     
     def drop_item(self, item: Item):
         self.unequip(item)
-        print(self.inventory, item)
         self.inventory.remove(item)
-        print(self.inventory, item)
             
     def pickup(self, item: Item) -> bool:
         if len(self.inventory) == self.inventory_capacity():

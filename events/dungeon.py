@@ -2,6 +2,7 @@ import nextcord
 from nextcord import Interaction, ui
 from typing import List, Tuple
 from objects.entities import DisCharacter
+from objects.items import ForgedItem
 from ui.character import CharacterView
 import objects.context as rpgctx
 from ui.helper import ConfirmButton
@@ -38,7 +39,7 @@ class Dungeon():
         self.survived = False
         
     def generate_room(self):
-        self.room = Room(loot_tier=self.loot_tier, danger_tier=self.danger_tier)
+        self.room = Room(player=self.player, loot_tier=self.loot_tier, danger_tier=self.danger_tier)
         self.room_count += 1
     
     async def main(self) -> bool:
@@ -46,7 +47,7 @@ class Dungeon():
         if not self.survived:
             # Drop all gear
             # Forged gear loot tables
-            forged = [ item for item in self.player.inventory if item.forged ]
+            forged = [ item for item in self.player.inventory if isinstance(item, ForgedItem) ]
             for item in forged:
                 item.lost_owner = self.player.owner
                 add_lost_gear(item)
@@ -71,6 +72,10 @@ class Dungeon():
             await room_view.wait()
             
             if room_view.action.action == RoomActions.EXIT:
+                for item in self.player.inventory:
+                    if item.lost_owner is not None:
+                        item.lost_owner = None
+
                 await self.display_text("You escaped the dungeon", color=Dungeon.GREEN)
                 self.survived = True
                 return True

@@ -2,14 +2,17 @@ import pickle
 import os
 
 
+def wipe_data():
+    _data["accounts"] = {}
+    _data["lost_gear"] = []
+
+
 if os.path.exists("storage.dat"):
     with open("storage.dat", "rb") as f:
         _data = pickle.load(f)
 else:
-    _data = {
-        "accounts": {},
-        "lost_gear": []
-    }
+    _data = {}
+    wipe_data()
 
 
 def has_account(user_id: int):
@@ -20,11 +23,13 @@ def get_account(user_id: int):
     return _data["accounts"][user_id]
 
 
-def find_lost_gear(user_id: int):
-    applicable = [ x for x in _data["lost_gear"] if x.lost_owner != user_id ]
+def find_lost_gear(user_id: int, min_level: int, max_level: int):
+    applicable = [ x for x in _data["lost_gear"] if x.lost_owner == user_id and min_level <= x.forge_level <= max_level ]
     if not applicable:
         return None
-    return applicable[0]
+    i = applicable[0]
+    _data["lost_gear"].remove(i)
+    return i
 
 
 def add_lost_gear(item):
@@ -38,6 +43,7 @@ def create_account(user_id: int, acc):
 def save_data():
     for acc in _data["accounts"].values():
         acc.in_dungeon = False
+        acc.in_menu = False
     print(_data)
     with open("storage.dat", "wb+") as f:
         pickle.dump(_data, f)

@@ -28,6 +28,16 @@ class LootTable:
         return list(self.entries.keys())[-1]
 
 
+dungeon_chest_forge_levels = [
+    ( 0,  2 ),
+    ( 0,  3 ),
+    ( 1,  6 ),
+    ( 2,  8 ),
+    ( 4, 10 ),
+    ( 4, 13 ),
+]
+
+
 dungeon_chest_tables = [
     LootTable(
         trinkets.AncientCoin, 40,

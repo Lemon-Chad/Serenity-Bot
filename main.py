@@ -3,11 +3,11 @@ import nextcord
 from nextcord import Interaction
 from nextcord.ext import commands, tasks
 from events.dungeon import Dungeon
+from ui.forge import ForgeView
+from ui.itemrename import SelectRenameView
+from ui.market import MarketView
 from objects.account import Account
-import objects.entities
 from ui.character import CharacterView
-import ui.helper
-import objects.loot_tables
 import data
 from ui.storage import StorageView
 import objects.context as rpgctx
@@ -42,8 +42,7 @@ class Client(commands.Bot):
 client = Client()
 
 extensions = [
-    "fight",
-    "rooms"
+    "admin"
 ]
 
 if __name__ == "__main__":
@@ -62,81 +61,163 @@ def simple_embed(title: str, description: str, color: int) -> nextcord.Embed:
     return embed
 
 
+def menu(name: str):
+    def decorator(func):
+        async def new_func(interaction: Interaction):
+            acc: Account = find_account(interaction)
+            
+            if acc.in_dungeon:
+                await interaction.send(embed=simple_embed(
+                    name, 
+                    "Cannot access while in dungeon",
+                    Colors.RED
+                ), ephemeral=True)
+                return
+            if acc.in_menu:
+                await interaction.send(embed=simple_embed(
+                    name, 
+                    "You are already in another menu",
+                    Colors.RED
+                ), ephemeral=True)
+                return
+            
+            acc.in_menu = True
+            v = await func(acc, interaction)
+            acc.in_menu = False
+            
+            return v
+        return new_func
+    return decorator
+
+
 @client.event
 async def on_ready():
     print("N: Annihilation Bot")
     print("V: 1.0.0a")
     print("U: March 7. 2023")
     print("C: LemonChad")
-
-
-@client.slash_command(name="generatestats", description="Generates random stats", guild_ids=TESTING_GUILDS)
-async def generate_stats(interaction: Interaction, power_lvl: int):
-    await interaction.send(str(objects.entities.generate_stats(power_lvl)))
     
-    
-@client.slash_command(name="generatebar", description="Generates an HP bar", guild_ids=TESTING_GUILDS)
-async def generate_bar(interaction: Interaction, hp: int, max_hp: int):
-    await interaction.send(str(ui.helper.tiered_bar(hp, max_hp, number=True)))
 
-
-@commands.is_owner()
-@client.slash_command(name="shutdown", description="Stops the bot.", guild_ids=TESTING_GUILDS)
-async def shutdown(interaction: Interaction):
-    await interaction.send("Shutting down.", ephemeral=True)
-    await client.close()
-    
-    
-@client.slash_command(name="stash", description="Manage your stash", guild_ids=TESTING_GUILDS)
-async def stash(interaction: Interaction):
+@client.slash_command(name="market", description="Allows you to sell items from your inventory", guild_ids=TESTING_GUILDS)
+@menu(name="Market")
+async def market(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
-    acc = find_account(interaction)
     
-    if acc.in_dungeon:
-        await interaction.send(embed=simple_embed(
-            "Stash", 
-            "Cannot access stash in dungeon",
-            Colors.RED
-        ))
-        return
+    market_view = MarketView(interaction, acc)
+    await market_view.main()
+    await market_view.wait()
+
+
+@client.slash_command(name="forge", description="Allows you to vastly upgrade your gear", guild_ids=TESTING_GUILDS)
+@menu(name="Forge")
+async def forge(acc: Account, interaction: Interaction):
+    await interaction.response.defer(ephemeral=True)
+    
+    forge_view = ForgeView(acc, interaction)
+    await forge_view.main()
+    await forge_view.wait()
+
+
+@client.slash_command(name="stash", description="Manage your stash", guild_ids=TESTING_GUILDS)
+@menu(name="Stash")
+async def stash(acc: Account, interaction: Interaction):
+    await interaction.response.defer(ephemeral=True)
     
     msg = await interaction.send("** **")
     s_view = StorageView(msg, acc.player, acc.stash)
     await s_view.update()
     await s_view.wait()
     await msg.delete()
+
+
+@client.slash_command(name="balance", description="View your current balance", guild_ids=TESTING_GUILDS)
+async def balance(interaction: Interaction):
+    acc: Account = find_account(interaction)
     
+    await interaction.send(embed=simple_embed(
+        title="Balance",
+        description=f"{acc.money:,} 🪙",
+        color=Colors.GOLD
+    ))
+
+
+@client.slash_command(name="rename", description="Rename a forged item for 10 🪙", guild_ids=TESTING_GUILDS)
+async def rename_item(interaction: Interaction, name: str):
+    acc: Account = find_account(interaction)
     
-@client.slash_command(name="character", description="Manage your character", guild_ids=TESTING_GUILDS)
-async def character(interaction: Interaction):
-    await interaction.response.defer(ephemeral=True)
-    acc = find_account(interaction)
-    
-    if acc.in_dungeon:
-        await interaction.send(embed=simple_embed(
-            "Character", 
-            "Cannot access character in dungeon",
-            Colors.RED
-        ))
+    if acc.money < 10:
+        await interaction.send(
+            embed=simple_embed(
+                title="Rename",
+                description="You cannot afford this expense",
+                color=Colors.RED
+            ), ephemeral=True
+        )
         return
+    
+    msg = await interaction.send(
+        embed=simple_embed(
+            title="Rename",
+            description="Choose an item to rename",
+            color=Colors.GOLD,
+        ), ephemeral=True
+    )
+    
+    r_view = SelectRenameView(acc)
+    await msg.edit(view=r_view)
+    await r_view.wait()
+    await msg.delete()
+    
+    if r_view.selected is None:
+        await interaction.send(
+            embed=simple_embed(
+                title="Rename",
+                description="You must select an item",
+                color=Colors.RED
+            ), ephemeral=True
+        )
+        return
+    
+    r_view.selected.name = name
+    acc.money -= 10
+    
+    await interaction.send(
+        embed=simple_embed(
+            title="Rename",
+            description="Item renamed successfully",
+            color=Colors.GREEN
+        ), ephemeral=True
+    )
+
+
+@client.slash_command(name="character", description="Manage your character", guild_ids=TESTING_GUILDS)
+@menu(name="Character")
+async def character(acc: Account, interaction: Interaction):
+    await interaction.response.defer(ephemeral=True)
     
     msg = await interaction.send("** **")
     c_view = CharacterView(msg, rpgctx.RPGContext(acc.player))
     await c_view.update()
     await c_view.wait()
     await msg.delete()
-    
-    
+
+
+DUNGEON_TIERS = [
+    "1⭐",
+    "2⭐",
+    "3⭐",
+    "1🌟",
+    "2🌟",
+    "3🌟",
+]
+
+
 @client.slash_command(name="adventure", description="Finds a dungeon", guild_ids=TESTING_GUILDS)
 async def adventure(interaction: Interaction, difficulty: int = nextcord.SlashOption(
     name="difficulty",
     choices={
-        "⭐": 1,
-        "⭐⭐": 2,
-        "⭐⭐⭐": 3,
-        "🌟": 4,
-        "🌟🌟": 5,
-        "🌟🌟🌟": 6
+        x: i + 1
+        for i, x in enumerate(DUNGEON_TIERS)
     }
 )):
     acc = find_account(interaction)
@@ -149,18 +230,17 @@ async def adventure(interaction: Interaction, difficulty: int = nextcord.SlashOp
         ), ephemeral=True)
         return
     
-    tiers = [
-        "⭐",
-        "⭐⭐",
-        "⭐⭐⭐",
-        "🌟",
-        "🌟🌟",
-        "🌟🌟🌟",
-    ]
+    if acc.in_menu:
+        await interaction.send(embed=simple_embed(
+            "Dungeon", 
+            "You are currently in an active menu",
+            Colors.RED
+        ), ephemeral=True)
+        return
     
     await interaction.send(embed=simple_embed(
         "Dungeon", 
-        f"{interaction.user.mention} is entering a {tiers[difficulty - 1]} dungeon",
+        f"{interaction.user.mention} is entering a **{DUNGEON_TIERS[difficulty - 1]}** dungeon",
         Colors.GOLD
     ))
     loot_tier = difficulty

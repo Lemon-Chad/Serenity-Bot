@@ -60,7 +60,63 @@ class GenericItem(Item):
         return ItemUseResponse.fail("Generic Item Use")
 
 
-class Weapon(Item):
+# TODO: Add forge perks
+# Does nothing for now.
+class ForgePerk(ABC):
+    def __init__(self) -> None:
+        super().__init__()
+
+
+class ForgePerkMaterialItem(GenericItem):
+    perk: ForgePerk
+    
+    def __init__(self, name: str, description: str, emoji: str, value: int, perk: ForgePerk) -> None:
+        super().__init__(name, description, emoji, value)
+        self.perk = perk
+
+
+class ForgeMaterialItem(GenericItem):
+    forge_level: int
+    
+    def __init__(self, name: str, description: str, emoji: str, value: int, forge_level: int) -> None:
+        super().__init__(name, description, emoji, value)
+        self.forge_level = forge_level
+
+
+class ForgedItem(Item):
+    stats: Stats
+    forge_level: int
+    
+    def __init__(self, name: str, emoji: str, item_type: int, value: int, base_stats: Stats, forge_level: int) -> None:
+        self.stats = Stats(*[ forged_stat(x, forge_level) for x in base_stats ])
+        self.forge_level = forge_level
+        
+        super().__init__(
+            name, 
+            " ".join([
+                "+" + str(x) + " " + STAT_KEY[i]
+                for i, x in enumerate(self.stats)
+                if x > 0
+            ]), 
+            emoji, 
+            item_type, 
+            value * (3 * forge_level + 1)
+        )
+
+    async def on_use(self, _) -> ItemUseResponse:
+        return ItemUseResponse.fail("Forged Type Item")
+
+
+class ForgeableItem(Item):
+    def __init__(self, name: str, description: str, emoji: str, item_type: int, value: int) -> None:
+        super().__init__(name, description, emoji, item_type, value)
+        
+    @abstractmethod
+    def forge(self, forge_level: int) -> ForgedItem:
+        return None
+
+
+class Weapon(ForgeableItem):
     stats: Stats
     
     def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
@@ -74,12 +130,12 @@ class Weapon(Item):
         return ItemUseResponse.fail("Weapon Type Item")
 
 
-class Consumable(Item):
+class ConsumableItem(Item):
     def __init__(self, name: str, description: str, emoji: str) -> None:
         super().__init__(name, description, emoji, ItemType.CONSUMABLE, 3)
 
 
-class Helmet(Item):
+class Helmet(ForgeableItem):
     stats: Stats
     
     def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
@@ -92,7 +148,7 @@ class Helmet(Item):
         return ItemUseResponse.fail("Armor Type Item")
 
 
-class Armor(Item):
+class Armor(ForgeableItem):
     stats: Stats
     
     def __init__(self, name: str, description: str, emoji: str, stats: Stats) -> None:
@@ -103,4 +159,41 @@ class Armor(Item):
 
     async def on_use(self, _) -> ItemUseResponse:
         return ItemUseResponse.fail("Armor Type Item")
+
+
+def forged_stat(x, lvl):
+    return round(x * (1 + lvl / 2))
+
+
+STAT_KEY = [
+    "HP",
+    "DEF",
+    "STR",
+    "SPD",
+    "LCK"
+]
+
+
+class ForgedWeapon(ForgedItem):
+    def __init__(self, name: str, emoji: str, base_stats: Stats, forge_level: int) -> None:
+        super().__init__(name, emoji, ItemType.WEAPON, 2, base_stats, forge_level)
+        
+        self.slot[EquipSlots.MAINHAND] = True
+        self.slot[EquipSlots.OFFHAND] = True
+
+
+class ForgedHelmetItem(ForgedItem):
+    def __init__(self, name: str, emoji: str, base_stats: Stats, forge_level: int) -> None:
+        super().__init__(name, emoji, ItemType.WEAPON, 2, base_stats, forge_level)
+        
+        self.slot[EquipSlots.HELMET] = True
+
+
+class ForgedArmorItem(ForgedItem):
+    def __init__(self, name: str, emoji: str, base_stats: Stats, forge_level: int) -> None:
+        super().__init__(name, emoji, ItemType.WEAPON, 3, base_stats, forge_level)
+        
+        self.slot[EquipSlots.ARMOR] = True
+
+
 

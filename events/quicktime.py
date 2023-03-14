@@ -5,7 +5,7 @@ import random
 
 class QuicktimeEvent(ui.View):
     def __init__(self, speed: int, 
-                 correct_style: nextcord.ButtonStyle, incorrect_style: nextcord.ButtonStyle, 
+                 correct_style: int, incorrect_style: int, 
                  correct_emoji: str, incorrect_emoji: str,
                  option_count: int, correct_chance: float, always_possible: bool):
         super().__init__(timeout=speed)

@@ -1,7 +1,7 @@
-from objects.items import Consumable, ItemUseResponse
+from objects.items import ConsumableItem, ItemUseResponse
 import objects.context as rpgctx
 
-class HealthPotion(Consumable):
+class HealthPotion(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Health Potion I", "Heals 2 HP", "🧪")
     
@@ -13,7 +13,7 @@ class HealthPotion(Consumable):
         return ItemUseResponse.ok("Healed 2 HP")
 
 
-class HealthPotionII(Consumable):
+class HealthPotionII(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Health Potion II", "Heals 5 HP", "🧪")
     
@@ -25,7 +25,7 @@ class HealthPotionII(Consumable):
         return ItemUseResponse.ok("Healed 5 HP")
 
 
-class HealthPotionIII(Consumable):
+class HealthPotionIII(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Health Potion III", "Heals 15 HP", "🧪")
     
@@ -37,34 +37,34 @@ class HealthPotionIII(Consumable):
         return ItemUseResponse.ok("Healed 15 HP")
 
 
-class Grenade(Consumable):
+class Grenade(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Grenade I", "Deals 5 DMG", "🧨")
     
     async def on_use(self, context: rpgctx.BattleContext) -> ItemUseResponse:
-        if type(context) != rpgctx.BattleContext:
+        if not isinstance(context, rpgctx.BattleContext):
             return ItemUseResponse.fail("Must be used in battle")
         enemy = context.enemy
         return ItemUseResponse.ok(f"Dealt {enemy.damage(5)} DMG")
 
 
-class GrenadeII(Consumable):
+class GrenadeII(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Grenade II", "Deals 10 DMG", "🧨")
     
     async def on_use(self, context: rpgctx.BattleContext) -> ItemUseResponse:
-        if type(context) != rpgctx.BattleContext:
+        if not isinstance(context, rpgctx.BattleContext):
             return ItemUseResponse.fail("Must be used in battle")
         enemy = context.enemy
         return ItemUseResponse.ok(f"Dealt {enemy.damage(10)} DMG")
 
 
-class GrenadeIII(Consumable):
+class GrenadeIII(ConsumableItem):
     def __init__(self) -> None:
         super().__init__("Grenade III", "Deals 15 DMG", "🧨")
     
     async def on_use(self, context: rpgctx.BattleContext) -> ItemUseResponse:
-        if type(context) != rpgctx.BattleContext:
+        if not isinstance(context, rpgctx.BattleContext):
             return ItemUseResponse.fail("Must be used in battle")
         enemy = context.enemy
         return ItemUseResponse.ok(f"Dealt {enemy.damage(15)} DMG")

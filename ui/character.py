@@ -83,7 +83,7 @@ class CharacterView(ui.View):
         
         embed.add_field(name="Health", value=tiered_bar(p.hp, p.max_hp, number=True), inline=False)
         
-        embed.add_field(name="Equipped", value="", inline=False)
+        embed.add_field(name="__Equipped__", value="", inline=False)
         
         embed.add_field(name="Mainhand", value=self.get_equipped_name(EquipSlots.MAINHAND), inline=True)
         embed.add_field(name="Helmet"  , value=self.get_equipped_name(EquipSlots.HELMET  ), inline=True)
@@ -116,7 +116,7 @@ class CharacterView(ui.View):
         luck = ":four_leaf_clover:" * (p.speed // 10 + 1)
            
           
-        embed.add_field(name="Stats", value="", inline=False)
+        embed.add_field(name="__Stats__", value="", inline=False)
         
         embed.add_field(name="VITALITY", value=hlth, inline=True)
         embed.add_field(name="STRENGTH", value=strngth, inline=True)
@@ -141,7 +141,7 @@ class CharacterView(ui.View):
         self.clear_items()
         row = 0
         
-        if type(self.response) == items.ItemUseResponse:
+        if isinstance(self.response, items.ItemUseResponse):
             self.add_item(ui.Button(
                 style=nextcord.ButtonStyle.green if self.response.used else nextcord.ButtonStyle.red,
                 label=self.response.message,

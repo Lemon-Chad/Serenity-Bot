@@ -1,10 +1,11 @@
 from typing import List
+from data import find_lost_gear
 from objects.items import Item
-from objects.entities import Enemy, generate_stats
+from objects.entities import DisCharacter, Enemy, generate_stats
 import math
 import random
 from objects.storage import Storage
-from objects.loot_tables import dungeon_chest_tables
+from objects.loot_tables import dungeon_chest_tables, dungeon_chest_forge_levels
 
 
 class Chest:
@@ -39,12 +40,14 @@ class Room:
     layout: List[Tile]
     danger: int
     loot: int
+    player: DisCharacter
     
-    def __init__(self, loot_tier=1, danger_tier=1, size=4):
+    def __init__(self, player: DisCharacter, loot_tier=1, danger_tier=1, size=4):
         self.size = size
         self.loot = loot_tier
         self.layout = [ None for _ in range(size * size) ]
         self.danger = danger_tier
+        self.player = player
         
         open_spaces = [ (x, y) for x in range(size) for y in range(size) ]
         
@@ -90,7 +93,7 @@ class Room:
             self.layout[x + y * size] = Tile(tile_type, Enemy(hp * 5, defense, strength, speed))
         
         # Generates chests in random positions
-        chest_count = random.randint(0, min(len(open_spaces), 2))
+        chest_count = random.randint(2, min(len(open_spaces), 5))
         for _ in range(chest_count):
             x, y = random_space()
             
@@ -104,10 +107,23 @@ class Room:
 
     def get_loot(self, tier) -> List[Item]:
         loot_level = min(tier - 1, 5)
+        
         loot_table = dungeon_chest_tables[loot_level]
+        
         bonus_rolls = tier - loot_level - 1
         rolls = random.randint(2, 5)
-        return [ loot_table.drop()() for _ in range(rolls + bonus_rolls) ]
+        
+        loot = [ loot_table.drop()() for _ in range(rolls + bonus_rolls) ]
+        
+        # Add lost player loot
+        if random.random() < 0.5:
+            loot.append(find_lost_gear(
+                self.player.owner, 
+                dungeon_chest_forge_levels[loot_level][0] + bonus_rolls,
+                dungeon_chest_forge_levels[loot_level][1] + bonus_rolls,
+            ))
+            
+        return loot
 
     def get_tile(self, x, y) -> Tile:
         return self.layout[x + y * self.size]

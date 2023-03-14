@@ -1,40 +1,40 @@
-from objects.items import GenericItem
+from objects.items import ForgeMaterialItem
 
-class IronAlloy(GenericItem):
+class IronAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Iron Alloy", "A simple iron alloy", '🪨', 10)
+        super().__init__("Iron Alloy", "A simple iron alloy", '🪨', 10, 1)
 
 
-class BronzeAlloy(GenericItem):
+class BronzeAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Bronze Alloy", "A simple bronze alloy", '🪨', 20)
+        super().__init__("Bronze Alloy", "A simple bronze alloy", '🪨', 20, 2)
 
 
-class SteelAlloy(GenericItem):
+class SteelAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Steel Alloy", "A strong steel alloy", '🪨', 30)
+        super().__init__("Steel Alloy", "A strong steel alloy", '🪨', 30, 3)
 
 
-class CrystalAlloy(GenericItem):
+class CrystalAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Crystal Alloy", "A shiny crystal alloy", '🪨', 40)
+        super().__init__("Crystal Alloy", "A shiny crystal alloy", '🪨', 40, 5)
 
 
-class PlatinumAlloy(GenericItem):
+class PlatinumAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Platinum Alloy", "A resilient platinum alloy", '🪨', 50)
+        super().__init__("Platinum Alloy", "A resilient platinum alloy", '🪨', 50, 6)
 
 
-class TitaniumAlloy(GenericItem):
+class TitaniumAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Titanium Alloy", "An incredible titanium alloy", '🪨', 65)
+        super().__init__("Titanium Alloy", "An incredible titanium alloy", '🪨', 65, 8)
 
 
-class MysticAlloy(GenericItem):
+class MysticAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Mystic Alloy", "An enticing mystical alloy", '🪨', 85)
+        super().__init__("Mystic Alloy", "An enticing mystical alloy", '🪨', 85, 10)
 
 
-class ExoticAlloy(GenericItem):
+class ExoticAlloy(ForgeMaterialItem):
     def __init__(self) -> None:
-        super().__init__("Exotic Alloy", "An iridescent exotic alloy", '🪨', 100)
+        super().__init__("Exotic Alloy", "An iridescent exotic alloy", '🪨', 100, 13)

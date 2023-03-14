@@ -12,6 +12,7 @@ class Account:
     in_dungeon: bool
     in_menu: bool
     
+    # TODO: Remove OP starter stash.
     def __init__(self, user: nextcord.User) -> None:
         self.user = user.id
         

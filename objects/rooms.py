@@ -6,6 +6,8 @@ import math
 import random
 from objects.storage import Storage
 from objects.loot_tables import dungeon_chest_tables, dungeon_chest_forge_levels
+from abc import ABC, abstractmethod
+from nextcord import Interaction
 
 
 class Chest:
@@ -24,6 +26,7 @@ class TileType:
     EXIT  = 5
     ENEMY_DOOR = 6
     BAG = 7
+    SUPER_CHEST = 8
     
     
 class Tile:
@@ -42,7 +45,8 @@ class Room:
     loot: int
     player: DisCharacter
     
-    def __init__(self, player: DisCharacter, loot_tier=1, danger_tier=1, size=4, spawn_room=False):
+    def __init__(self, player: DisCharacter, loot_tier=1, danger_tier=1, size=4, 
+                 spawn_room=False, super_chest=False):
         self.size = size
         self.loot = loot_tier
         self.layout = [ None for _ in range(size * size) ]
@@ -68,6 +72,13 @@ class Room:
             x, y = random_space()
             self.layout[x + y * size] = Tile(TileType.DOOR)
             open_doors.append((x, y))
+            
+        if super_chest:
+            x, y = random_space()
+            
+            chest = Chest(*self.get_loot(loot_tier + 2))
+            
+            self.layout[x + y * size] = Tile(TileType.SUPER_CHEST, chest)
             
         # Exit
         if random.random() < 0.05 and not spawn_room:
@@ -136,3 +147,15 @@ class Room:
             self.layout[i] = Tile(TileType.BAG, Chest(*self.get_loot(self.loot + 1), name=self.layout[i].contents.name))
         else:
             self.layout[i] = Tile(TileType.EMPTY)
+
+
+class Puzzle(ABC):
+    player: DisCharacter
+    
+    def __init__(self, player: DisCharacter) -> None:
+        super().__init__()
+        self.player = player
+    
+    @abstractmethod
+    async def main(self, interaction: Interaction) -> bool:
+        ...

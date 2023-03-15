@@ -47,7 +47,7 @@ class CharacterView(ui.View):
             )
             use_button.callback = self.use_item
             self.add_item(use_button)
-        elif self.selected_item.item_type in (items.ItemType.WEAPON, items.ItemType.ARMOR):
+        elif self.selected_item.item_type in ( items.ItemType.WEAPON, items.ItemType.ARMOR ):
             for i, x in enumerate(["Mainhand", "Offhand", "Helmet", "Armor"]):
                 if not self.selected_item.slot[i]:
                     continue

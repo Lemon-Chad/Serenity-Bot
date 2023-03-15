@@ -1,3 +1,4 @@
+from typing import List
 import nextcord
 from nextcord import ui, Interaction
 from objects.rooms import Room
@@ -31,19 +32,21 @@ class RoomAction:
 
 class RoomView(ui.View):
     STYLE_GUIDE = {
-        TileType.CHEST      : ButtonStyle.green,
-        TileType.BAG        : ButtonStyle.green,
-        TileType.ENEMY      : ButtonStyle.red,
-        TileType.ENEMY_DOOR : ButtonStyle.red,
-        TileType.WALL       : ButtonStyle.blurple,
+        TileType.CHEST       : ButtonStyle.green,
+        TileType.SUPER_CHEST : ButtonStyle.blurple,
+        TileType.BAG         : ButtonStyle.green,
+        TileType.ENEMY       : ButtonStyle.red,
+        TileType.ENEMY_DOOR  : ButtonStyle.red,
+        TileType.WALL        : ButtonStyle.blurple,
     }
     EMOJI_GUIDE = {
-        TileType.CHEST      : '📦', 
-        TileType.ENEMY      : '💀',
-        TileType.ENEMY_DOOR : '💀',
-        TileType.DOOR       : '🚪',
-        TileType.EXIT       : '🚀',
-        TileType.BAG        : '💰',
+        TileType.CHEST       : '📦', 
+        TileType.SUPER_CHEST : '📦', 
+        TileType.ENEMY       : '💀',
+        TileType.ENEMY_DOOR  : '💀',
+        TileType.DOOR        : '🚪',
+        TileType.EXIT        : '🚀',
+        TileType.BAG         : '💰',
     }
     
     room: Room
@@ -88,10 +91,13 @@ class RoomView(ui.View):
         tile = self.room.get_tile(x, y)
         if tile.tile_type == TileType.DOOR:
             self.set_action(RoomActions.NEXT, x, y)
+            
         elif tile.tile_type == TileType.ENEMY or tile.tile_type == TileType.ENEMY_DOOR:
             self.set_action(RoomActions.FIGHT, x, y, tile.contents)
-        elif tile.tile_type == TileType.CHEST or tile.tile_type == TileType.BAG:
+            
+        elif tile.tile_type in ( TileType.CHEST, TileType.BAG, TileType.SUPER_CHEST ):
             self.set_action(RoomActions.LOOT_CHEST, x, y, tile.contents)
+            
         elif tile.tile_type == TileType.EXIT:
             self.set_action(RoomActions.EXIT, x, y)
     
@@ -101,3 +107,14 @@ class RoomView(ui.View):
     def set_action(self, action: int, x: int, y: int, payload: any = None):
         self.stop()
         self.action = RoomAction(action, x, y, payload)
+
+
+class MinePuzzle(ui.View):
+    player: DisCharacter
+    interaction: Interaction
+    msg: nextcord.Message
+    board: List[int]
+    marked: List[bool]
+
+    def __init__(self) -> None:
+        super().__init__()

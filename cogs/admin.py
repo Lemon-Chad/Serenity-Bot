@@ -21,8 +21,18 @@ class AdminCommands(commands.Cog):
         
     def wait_for_start(delay: int, program: str):
         time.sleep(delay)
+        
+        print("Updating...")
+        t = threading.Thread(target=AdminCommands.git_pull)
+        t.start()
+        
+        time.sleep(5)
+        
         print("Restarting...")
         os.execv(sys.executable, [program] + sys.argv)
+    
+    def git_pull():
+        os.execl(os.getcwd(), ["git", "pull"])
         
     @nextcord.slash_command(name="restart", description="Restarts the bot.", guild_ids=ADMIN_GUILDS)
     async def shutdown(self, interaction: Interaction, program: str = 'python3'):

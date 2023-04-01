@@ -6,8 +6,6 @@ import math
 import random
 from objects.storage import Storage
 from objects.loot_tables import dungeon_chest_tables, dungeon_chest_forge_levels
-from abc import ABC, abstractmethod
-from nextcord import Interaction
 
 
 class Chest:
@@ -27,6 +25,7 @@ class TileType:
     ENEMY_DOOR = 6
     BAG = 7
     SUPER_CHEST = 8
+    PUZZLE = 9
     
     
 class Tile:
@@ -72,6 +71,10 @@ class Room:
             x, y = random_space()
             self.layout[x + y * size] = Tile(TileType.DOOR)
             open_doors.append((x, y))
+
+        if random.random() < 0.1:
+            x, y = random_space()
+            self.layout[x + y * size] = Tile(TileType.PUZZLE)
             
         if super_chest:
             x, y = random_space()
@@ -104,7 +107,7 @@ class Room:
             self.layout[x + y * size] = Tile(tile_type, Enemy(hp * 5, defense, strength, speed))
         
         # Generates chests in random positions
-        chest_count = random.randint(0, min(len(open_spaces), 3)) + spawn_room * 2
+        chest_count = random.randint(0, min(len(open_spaces), 3)) + (super_chest or spawn_room) * 2
         for _ in range(chest_count):
             x, y = random_space()
             
@@ -128,11 +131,13 @@ class Room:
         
         # Add lost player loot
         if random.random() < 0.05:
-            loot.append(find_lost_gear(
+            g = find_lost_gear(
                 self.player.owner, 
                 dungeon_chest_forge_levels[loot_level][0] + bonus_rolls,
                 dungeon_chest_forge_levels[loot_level][1] + bonus_rolls,
-            ))
+            )
+            if g is not None:
+                loot.append(g)
             
         return loot
 
@@ -147,15 +152,3 @@ class Room:
             self.layout[i] = Tile(TileType.BAG, Chest(*self.get_loot(self.loot + 1), name=self.layout[i].contents.name))
         else:
             self.layout[i] = Tile(TileType.EMPTY)
-
-
-class Puzzle(ABC):
-    player: DisCharacter
-    
-    def __init__(self, player: DisCharacter) -> None:
-        super().__init__()
-        self.player = player
-    
-    @abstractmethod
-    async def main(self, interaction: Interaction) -> bool:
-        ...

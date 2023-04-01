@@ -2,7 +2,7 @@ import nextcord
 from nextcord.ui import View
 from objects.entities import DisCharacter
 from objects.storage import Storage
-from items import alloys, weapons, armors
+from items import alloys, weapons, armors, trinkets
 
 
 class Account:
@@ -19,6 +19,8 @@ class Account:
         self.user = user.id
         
         self.stash = Storage("Stash", 50)
+        
+        self.stash.insert_item(trinkets.AncientCoin())
         
         for _ in range(2):
             for _ in range(2):

@@ -43,6 +43,10 @@ class Fightable():
         
         self.speed = speed
         
+    def heal(self, amount):
+        self.hp = min(self.max_hp, self.hp + amount)
+        return amount
+        
     def damage(self, amount):
         dmg = max(amount - self.defense, 1)
         self.hp = max(0, self.hp - dmg)

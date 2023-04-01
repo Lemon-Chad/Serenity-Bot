@@ -9,7 +9,7 @@ class HealthPotion(ConsumableItem):
         player = context.player
         if player.hp >= player.max_hp:
             return ItemUseResponse.fail("Player is already at Max HP")
-        player.hp = min(player.hp + 2, player.max_hp)
+        player.heal(2)
         return ItemUseResponse.ok("Healed 2 HP")
 
 
@@ -21,7 +21,7 @@ class HealthPotionII(ConsumableItem):
         player = context.player
         if player.hp >= player.max_hp:
             return ItemUseResponse.fail("Player is already at Max HP")
-        player.hp = min(player.hp + 5, player.max_hp)
+        player.heal(5)
         return ItemUseResponse.ok("Healed 5 HP")
 
 
@@ -33,7 +33,7 @@ class HealthPotionIII(ConsumableItem):
         player = context.player
         if player.hp >= player.max_hp:
             return ItemUseResponse.fail("Player is already at Max HP")
-        player.hp = min(player.hp + 15, player.max_hp)
+        player.heal(15)
         return ItemUseResponse.ok("Healed 15 HP")
 
 

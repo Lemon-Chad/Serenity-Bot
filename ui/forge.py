@@ -172,9 +172,7 @@ class ForgeView(ui.View):
         self.acc.money -= self.forge_cost()
         
         new_item = self.forge_item.forge(self.upgrade_item.forge_level)
-        
-        # TODO: Add forge perks
-        # new_item.add_perk(self.perk_item.perk)
+        new_item.add_bonus(self.perk_item.bonus)
         
         self.acc.player.pickup(new_item)
         

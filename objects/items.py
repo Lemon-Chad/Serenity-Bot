@@ -60,19 +60,12 @@ class GenericItem(Item):
         return ItemUseResponse.fail("Generic Item Use")
 
 
-# TODO: Add forge perks
-# Does nothing for now.
-class ForgePerk(ABC):
-    def __init__(self) -> None:
-        super().__init__()
-
-
 class ForgePerkMaterialItem(GenericItem):
-    perk: ForgePerk
+    bonus: Stats
     
-    def __init__(self, name: str, description: str, emoji: str, value: int, perk: ForgePerk) -> None:
+    def __init__(self, name: str, description: str, emoji: str, value: int, bonus: Stats) -> None:
         super().__init__(name, description, emoji, value)
-        self.perk = perk
+        self.bonus = bonus
 
 
 class ForgeMaterialItem(GenericItem):
@@ -102,6 +95,14 @@ class ForgedItem(Item):
             item_type, 
             value * (3 * forge_level + 1)
         )
+        
+    def add_bonus(self, bonus: Stats):
+        self.stats += bonus
+        self.description = " ".join([
+            "+" + str(x) + " " + STAT_KEY[i]
+            for i, x in enumerate(self.stats)
+            if x > 0
+        ])
 
     async def on_use(self, _) -> ItemUseResponse:
         return ItemUseResponse.fail("Forged Type Item")

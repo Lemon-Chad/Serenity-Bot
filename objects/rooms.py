@@ -130,7 +130,7 @@ class Room:
         loot = [ loot_table.drop()() for _ in range(rolls + bonus_rolls) ]
         
         # Add lost player loot
-        if random.random() < 0.05:
+        if random.random() < 0.01:
             g = find_lost_gear(
                 self.player.owner, 
                 dungeon_chest_forge_levels[loot_level][0] + bonus_rolls,

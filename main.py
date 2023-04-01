@@ -88,7 +88,7 @@ def menu(name: str):
 @client.event
 async def on_ready():
     print("N: Annihilation Bot")
-    print("V: 1.0.0a")
+    print("V: 1.0.0")
     print("U: March 7. 2023")
     print("C: LemonChad")
     

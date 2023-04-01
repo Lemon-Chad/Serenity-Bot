@@ -91,6 +91,10 @@ async def on_ready():
     print("V: 1.0.0a")
     print("U: March 7. 2023")
     print("C: LemonChad")
+    
+    await client.change_presence(
+        activity=nextcord.Game(name="/help || We're live!")
+    )
 
 
 @client.slash_command(name="leaderboard", description="Shows the leaderboard of the wealthiest users")

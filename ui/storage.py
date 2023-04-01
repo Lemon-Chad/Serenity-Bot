@@ -67,7 +67,6 @@ class StorageView(ui.View):
                 next_button.callback = self.next_page
             self.add_item(next_button)
 
-        print(self.storage.items)
         storage_options = item_select_options(
             list(sorted(self.storage.items, key=lambda x: x.name))[ self.page * 25 : (self.page + 1) * 25 ],
             val=lambda x: self.storage.items.index(x)

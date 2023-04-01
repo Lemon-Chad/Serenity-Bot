@@ -35,7 +35,7 @@ class AdminCommands(commands.Cog):
         os.execl(os.getcwd(), ["git", "pull"])
         
     @nextcord.slash_command(name="restart", description="Restarts the bot.", guild_ids=ADMIN_GUILDS)
-    async def shutdown(self, interaction: Interaction, program: str = 'python3'):
+    async def restart(self, interaction: Interaction, program: str = 'python3'):
         await interaction.send("Shutting down.", ephemeral=True)
         
         t = threading.Thread(target=lambda: AdminCommands.wait_for_start(2, program))

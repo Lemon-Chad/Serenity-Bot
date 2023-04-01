@@ -6,6 +6,8 @@ import os
 import sys
 import threading
 import time
+import git
+
 
 ADMIN_GUILDS = [658882526470864896]
 
@@ -23,10 +25,8 @@ class AdminCommands(commands.Cog):
         time.sleep(delay)
         
         print("Updating...")
-        t = threading.Thread(target=AdminCommands.git_pull)
-        t.start()
-        
-        time.sleep(5)
+        g = git.cmd.Git(os.getcwd())
+        g.pull()
         
         print("Restarting...")
         os.execv(sys.executable, [program] + sys.argv)

@@ -93,7 +93,7 @@ async def on_ready():
     print("C: LemonChad")
     
     await client.change_presence(
-        activity=nextcord.Game(name="We're live! || /help")
+        activity=nextcord.Game(name=" /help | We're live!")
     )
 
 

@@ -19,16 +19,16 @@ class AdminCommands(commands.Cog):
         await interaction.send("Shutting down.", ephemeral=True)
         await self.client.close()
         
-    def wait_for_start(delay: int):
+    def wait_for_start(delay: int, program: str):
         time.sleep(delay)
         print("Restarting...")
-        os.execv(sys.argv[0], sys.argv)
+        os.execv(sys.executable, [program] + sys.argv)
         
     @nextcord.slash_command(name="restart", description="Restarts the bot.", guild_ids=ADMIN_GUILDS)
-    async def shutdown(self, interaction: Interaction):
+    async def shutdown(self, interaction: Interaction, program: str = 'python3'):
         await interaction.send("Shutting down.", ephemeral=True)
         
-        t = threading.Thread(target=lambda: AdminCommands.wait_for_start(2))
+        t = threading.Thread(target=lambda: AdminCommands.wait_for_start(2, program))
         t.start()
         
         await self.client.close()

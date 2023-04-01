@@ -1,4 +1,5 @@
 import nextcord
+from nextcord.ui import View
 from objects.entities import DisCharacter
 from objects.storage import Storage
 from items import alloys, weapons, armors
@@ -11,6 +12,7 @@ class Account:
     money: int
     in_dungeon: bool
     in_menu: bool
+    menu: View
     
     # TODO: Remove OP starter stash.
     def __init__(self, user: nextcord.User) -> None:
@@ -49,4 +51,13 @@ class Account:
         
         self.in_dungeon = False
         self.in_menu = False
-        
+        self.menu = None
+    
+    def open_menu(self, v: View):
+        self.menu = v
+        return v
+    
+    async def close_menu(self):
+        self.in_menu = False
+        if self.menu is not None:
+            self.menu.stop()

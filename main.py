@@ -74,12 +74,7 @@ def menu(name: str):
                 ), ephemeral=True)
                 return
             if acc.in_menu:
-                await interaction.send(embed=simple_embed(
-                    name, 
-                    "You are already in another menu",
-                    Colors.RED
-                ), ephemeral=True)
-                return
+                await acc.close_menu()
             
             acc.in_menu = True
             v = await func(acc, interaction)
@@ -103,7 +98,7 @@ async def on_ready():
 async def market(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
     
-    market_view = MarketView(interaction, acc)
+    market_view = acc.open_menu(MarketView(interaction, acc))
     await market_view.main()
     await market_view.wait()
 
@@ -113,7 +108,7 @@ async def market(acc: Account, interaction: Interaction):
 async def forge(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
     
-    forge_view = ForgeView(acc, interaction)
+    forge_view = acc.open_menu(ForgeView(acc, interaction))
     await forge_view.main()
     await forge_view.wait()
 
@@ -124,7 +119,7 @@ async def stash(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
     
     msg = await interaction.send("** **")
-    s_view = StorageView(msg, acc.player, acc.stash)
+    s_view = acc.open_menu(StorageView(msg, acc.player, acc.stash))
     await s_view.update()
     await s_view.wait()
     await msg.delete()
@@ -196,7 +191,7 @@ async def character(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
     
     msg = await interaction.send("** **")
-    c_view = CharacterView(msg, rpgctx.RPGContext(acc.player))
+    c_view = acc.open_menu(CharacterView(msg, rpgctx.RPGContext(acc.player)))
     await c_view.update()
     await c_view.wait()
     await msg.delete()

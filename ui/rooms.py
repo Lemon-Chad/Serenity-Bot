@@ -1,9 +1,6 @@
-from typing import List
-import nextcord
 from nextcord import ui, Interaction
 from objects.rooms import Room
 from objects.rooms import TileType
-from objects.entities import DisCharacter
 from nextcord import ButtonStyle
 
 
@@ -15,6 +12,7 @@ class RoomActions:
     CHARACTER = 4
     APPROACH_FOG = 5
     DIE = 6
+    PUZZLE = 7
 
 
 class RoomAction:
@@ -47,6 +45,7 @@ class RoomView(ui.View):
         TileType.DOOR        : '🚪',
         TileType.EXIT        : '🚀',
         TileType.BAG         : '💰',
+        TileType.PUZZLE      : '🧩',
     }
     
     room: Room
@@ -100,6 +99,9 @@ class RoomView(ui.View):
             
         elif tile.tile_type == TileType.EXIT:
             self.set_action(RoomActions.EXIT, x, y)
+
+        elif tile.tile_type == TileType.PUZZLE:
+            self.set_action(RoomActions.PUZZLE, x, y)
     
     def clear_tile(self, x: int, y: int):
         self.room.clear_tile(x, y)
@@ -107,14 +109,3 @@ class RoomView(ui.View):
     def set_action(self, action: int, x: int, y: int, payload: any = None):
         self.stop()
         self.action = RoomAction(action, x, y, payload)
-
-
-class MinePuzzle(ui.View):
-    player: DisCharacter
-    interaction: Interaction
-    msg: nextcord.Message
-    board: List[int]
-    marked: List[bool]
-
-    def __init__(self) -> None:
-        super().__init__()

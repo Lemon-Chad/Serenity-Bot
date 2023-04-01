@@ -11,6 +11,8 @@ from ui.rooms import RoomView, RoomActions
 from events.battle import Battle
 from ui.storage import StorageView
 from data import add_lost_gear
+from objects import puzzles
+import random
 
 
 class Dungeon():
@@ -33,18 +35,20 @@ class Dungeon():
         self.room_count = 0
         self.loot_tier = loot_tier
         self.danger_tier = danger_tier
+        self.survived = False
+        self.super_chest = False
         
         self.generate_room()
-        
-        self.survived = False
         
     def generate_room(self):
         self.room = Room(
             player=self.player, 
             loot_tier=self.loot_tier, 
             danger_tier=self.danger_tier, 
-            spawn_room=self.room_count == 0
+            spawn_room=self.room_count == 0,
+            super_chest=self.super_chest
         )
+        self.super_chest = False
         self.room_count += 1
     
     async def main(self) -> bool:
@@ -109,6 +113,20 @@ class Dungeon():
             elif room_view.action.action == RoomActions.DIE:
                 await self.display_text("You perished to the fog", color=Dungeon.RED)
                 return False
+
+            elif room_view.action.action == RoomActions.PUZZLE:
+                await self.display_text("You have entered a puzzle room...")
+                
+                p = random.choice([
+                    puzzles.MinePuzzle
+                ])(self.player)
+                survived = await p.main(self.interaction)
+
+                if not survived:
+                    await self.display_text("You perished to the puzzle", color=Dungeon.RED)
+                    return False
+                self.super_chest = True
+                self.generate_room()
     
     async def character(self):
         character_view = CharacterView(self.message, rpgctx.RPGContext(self.player))

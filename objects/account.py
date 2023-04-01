@@ -19,7 +19,7 @@ class Account:
         
         self.stash = Storage("Stash", 50)
         
-        self.player = DisCharacter(10, 0, 0, 0, 5, self.user)
+        self.player = DisCharacter(10, 0, 0, 0, 5, self.user, user.name)
         
         self.money = 0
         

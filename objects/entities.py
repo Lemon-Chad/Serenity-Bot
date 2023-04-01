@@ -62,7 +62,7 @@ class DisCharacter(Fightable):
     
     owner: int
     
-    def __init__(self, hp, defense, strength, speed, luck, owner):
+    def __init__(self, hp, defense, strength, speed, luck, owner, name):
         super().__init__(hp, defense, strength, speed)
         
         self.luck = luck
@@ -74,7 +74,7 @@ class DisCharacter(Fightable):
         self.inventory = []
         self.equipped = [ None, None, None, None ]
         
-        self.name = "<GenericPlayer>"
+        self.name = name
         
     def inventory_capacity(self):
         return 15
@@ -139,10 +139,80 @@ class DisCharacter(Fightable):
         return True       
 
 
+enemy_prefixes = [
+    "Weak",
+    "Strong",
+    "Ferocious",
+    "Tough",
+    "Holy",
+    "Demonic",
+    "Stone-Skinned",
+    "Armored",
+    "Pale",
+    "Dark",
+    "Light",
+    "Vicious",
+    "Fire",
+    "Ice",
+    "Earth",
+    "Shadow",
+    "Water",
+    "Wind",
+    "Stupid",
+    "Silly",
+    "Curious",
+    "Peculiar",
+    "Wise",
+    "Mystical",
+    "Speedy",
+    "Lucky",
+    "Vigorous",
+    "Giant",
+    "Huge",
+    "Big",
+    "Small",
+    "Little",
+    "Tiny",
+    "Unfathomable",
+    "Incomprehensible",
+    "Perplexing",
+    "Warping",
+    "Reality-bending"
+]
+
+enemy_types = [
+    "Goblin",
+    "Zombie",
+    "Skeleton",
+    "Lich",
+    "Dragon",
+    "Beast",
+    "Wizard",
+    "Knight",
+    "Ghost",
+    "Soul",
+    "Angel",
+    "Demon",
+    "Spirit",
+    "Imp",
+    "Warrior",
+    "Scavenger",
+    "Spider",
+    "Centipede",
+    "Creature",
+    "Enchanter",
+    "Enchantress",
+    "Warlock",
+    "Witch",
+    "Devourer",
+    "World Eater"
+]
+
+
 class Enemy(Fightable):
     name: str
     
     def __init__(self, hp, defense, strength, speed):
         super().__init__(hp, defense, strength, speed)
         
-        self.name = "<GenericEnemy>"
+        self.name = random.choice(enemy_prefixes) + " " + random.choice(enemy_types)

@@ -15,6 +15,10 @@ else:
     wipe_data()
 
 
+def top_accounts():
+    return sorted(_data["accounts"].values(), key=lambda x: x.money, reverse=True)
+
+
 def has_account(user_id: int):
     return user_id in _data["accounts"]
 
@@ -43,7 +47,7 @@ def create_account(user_id: int, acc):
 def save_data():
     for acc in _data["accounts"].values():
         acc.in_dungeon = False
-        acc.in_menu = False
+        acc.close_menu()
     print(_data)
     with open("storage.dat", "wb+") as f:
         pickle.dump(_data, f)

@@ -74,7 +74,7 @@ def menu(name: str):
                 ), ephemeral=True)
                 return
             if acc.in_menu:
-                await acc.close_menu()
+                acc.close_menu()
             
             acc.in_menu = True
             v = await func(acc, interaction)
@@ -91,6 +91,21 @@ async def on_ready():
     print("V: 1.0.0a")
     print("U: March 7. 2023")
     print("C: LemonChad")
+
+
+@client.slash_command(name="leaderboard", description="Shows the leaderboard of the wealthiest users", guild_ids=TESTING_GUILDS)
+async def leaderboard(interaction: Interaction):
+    top = data.top_accounts()[:10]
+    top_text = "\n".join([
+        f"{i + 1}. **{(await client.fetch_user(x.user)).name}** | *{x.money:,}* 🪙"
+        for i, x in enumerate(top)
+    ])
+    embed = nextcord.Embed(
+        title="Leaderboard",
+        colour=Colors.GOLD,
+    )
+    embed.add_field(name="** **", value=top_text)
+    await interaction.send(embed=embed)
 
 
 @client.slash_command(name="help", description="Gives you a rundown of the game", guild_ids=TESTING_GUILDS)

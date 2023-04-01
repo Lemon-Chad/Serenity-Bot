@@ -59,7 +59,8 @@ class Account:
         self.menu = v
         return v
     
-    async def close_menu(self):
+    def close_menu(self):
         self.in_menu = False
         if self.menu is not None:
             self.menu.stop()
+            self.menu = None

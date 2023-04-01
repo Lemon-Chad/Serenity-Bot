@@ -11,7 +11,6 @@ from ui.rooms import RoomView, RoomActions
 from events.battle import Battle
 from ui.storage import StorageView
 from data import add_lost_gear
-from objects import puzzles
 import random
 
 
@@ -113,20 +112,6 @@ class Dungeon():
             elif room_view.action.action == RoomActions.DIE:
                 await self.display_text("You perished to the fog", color=Dungeon.RED)
                 return False
-
-            elif room_view.action.action == RoomActions.PUZZLE:
-                await self.display_text("You have entered a puzzle room...")
-                
-                p = random.choice([
-                    puzzles.MinePuzzle
-                ])(self.player)
-                survived = await p.main(self.interaction)
-
-                if not survived:
-                    await self.display_text("You perished to the puzzle", color=Dungeon.RED)
-                    return False
-                self.super_chest = True
-                self.generate_room()
     
     async def character(self):
         character_view = CharacterView(self.message, rpgctx.RPGContext(self.player))

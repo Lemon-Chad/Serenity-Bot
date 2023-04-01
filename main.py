@@ -91,7 +91,41 @@ async def on_ready():
     print("V: 1.0.0a")
     print("U: March 7. 2023")
     print("C: LemonChad")
-    
+
+
+@client.slash_command(name="help", description="Gives you a rundown of the game", guild_ids=TESTING_GUILDS)
+async def help(interaction: Interaction):
+    embed = nextcord.Embed(colour=Colors.GOLD, title="Help", description="How to play")
+    embed.add_field(
+        name="Dungeons",
+        value="You can use the `/adventure` command to drop into a random dungeon of the chosen difficulty. You take "
+"whatever you have equipped on your character. You can click on tiles to explore them. For example, clicking on a '💀' will "
+"engage them in combat, clicking on a '📦' will loot it, and clicking on a '🚪' will take you to a new room in the dungeon. "
+"To escape the dungeon, you must find a '🚀' tile."
+    )
+    embed.add_field(
+        name="Extraction",
+        value="Serenity is a game based around extraction. Whenever you enter a dungeon, you bring your character's items "
+"with you. If you successfully escape the dungeon, you keep all the loot you acquired, and are free to put it in your stash. "
+"However, if you die, you lose everything you brought in."
+    )
+    embed.add_field(
+        name="Character",
+        value="You can view your character with `/character` command, allowing you to equip items from your inventory, "
+"and use consumables like Health Potions."
+    )
+    embed.add_field(
+        name="Stash",
+        value="Your stash is a storage space outside your character to store items you don't want to bring in to a dungeon. "
+"It can be accessed with the `/stash` command."
+    )
+    embed.add_field(
+        name="Forge",
+        value="The forge can be accessed with the `/forge` command. It's used to upgrade gear using items you find in "
+"the dungeons you explore. It may require some experimentation to perfect the art of creating the most exotic gear."
+    )
+    await interaction.send(embed=embed)
+
 
 @client.slash_command(name="market", description="Allows you to sell items from your inventory", guild_ids=TESTING_GUILDS)
 @menu(name="Market")

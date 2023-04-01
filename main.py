@@ -93,7 +93,7 @@ async def on_ready():
     print("C: LemonChad")
 
 
-@client.slash_command(name="leaderboard", description="Shows the leaderboard of the wealthiest users", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="leaderboard", description="Shows the leaderboard of the wealthiest users")
 async def leaderboard(interaction: Interaction):
     top = data.top_accounts()[:10]
     top_text = "\n".join([
@@ -108,7 +108,7 @@ async def leaderboard(interaction: Interaction):
     await interaction.send(embed=embed)
 
 
-@client.slash_command(name="help", description="Gives you a rundown of the game", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="help", description="Gives you a rundown of the game")
 async def help(interaction: Interaction):
     embed = nextcord.Embed(colour=Colors.GOLD, title="Help", description="How to play")
     embed.add_field(
@@ -142,7 +142,7 @@ async def help(interaction: Interaction):
     await interaction.send(embed=embed)
 
 
-@client.slash_command(name="market", description="Allows you to sell items from your inventory", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="market", description="Allows you to sell items from your inventory")
 @menu(name="Market")
 async def market(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
@@ -152,7 +152,7 @@ async def market(acc: Account, interaction: Interaction):
     await market_view.wait()
 
 
-@client.slash_command(name="forge", description="Allows you to vastly upgrade your gear", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="forge", description="Allows you to vastly upgrade your gear")
 @menu(name="Forge")
 async def forge(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
@@ -162,7 +162,7 @@ async def forge(acc: Account, interaction: Interaction):
     await forge_view.wait()
 
 
-@client.slash_command(name="stash", description="Manage your stash", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="stash", description="Manage your stash")
 @menu(name="Stash")
 async def stash(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
@@ -174,7 +174,7 @@ async def stash(acc: Account, interaction: Interaction):
     await msg.delete()
 
 
-@client.slash_command(name="balance", description="View your current balance", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="balance", description="View your current balance")
 async def balance(interaction: Interaction):
     acc: Account = find_account(interaction)
     
@@ -185,7 +185,7 @@ async def balance(interaction: Interaction):
     ))
 
 
-@client.slash_command(name="rename", description="Rename a forged item for 10 🪙", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="rename", description="Rename a forged item for 10 🪙")
 async def rename_item(interaction: Interaction, name: str):
     acc: Account = find_account(interaction)
     
@@ -234,7 +234,7 @@ async def rename_item(interaction: Interaction, name: str):
     )
 
 
-@client.slash_command(name="character", description="Manage your character", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="character", description="Manage your character")
 @menu(name="Character")
 async def character(acc: Account, interaction: Interaction):
     await interaction.response.defer(ephemeral=True)
@@ -256,7 +256,7 @@ DUNGEON_TIERS = [
 ]
 
 
-@client.slash_command(name="adventure", description="Finds a dungeon", guild_ids=TESTING_GUILDS)
+@client.slash_command(name="adventure", description="Finds a dungeon")
 async def adventure(interaction: Interaction, difficulty: int = nextcord.SlashOption(
     name="difficulty",
     choices={

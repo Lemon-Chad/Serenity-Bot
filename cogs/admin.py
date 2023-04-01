@@ -32,7 +32,7 @@ class AdminCommands(commands.Cog):
         os.execv(sys.executable, [program] + sys.argv)
     
     def git_pull():
-        os.execl(os.getcwd(), ["git", "pull"])
+        os.execl(os.getcwd(), "git", "pull")
         
     @nextcord.slash_command(name="restart", description="Restarts the bot.", guild_ids=ADMIN_GUILDS)
     async def restart(self, interaction: Interaction, program: str = 'python3'):

@@ -2,7 +2,10 @@ import nextcord
 from nextcord import Interaction
 from nextcord.ext import commands
 import data
-import os, sys
+import os
+import sys
+import threading
+import time
 
 ADMIN_GUILDS = [658882526470864896]
 
@@ -16,11 +19,19 @@ class AdminCommands(commands.Cog):
         await interaction.send("Shutting down.", ephemeral=True)
         await self.client.close()
         
+    def wait_for_start(delay: int):
+        time.sleep(delay)
+        print("Restarting...")
+        os.execv(sys.argv[0], sys.argv)
+        
     @nextcord.slash_command(name="restart", description="Restarts the bot.", guild_ids=ADMIN_GUILDS)
     async def shutdown(self, interaction: Interaction):
         await interaction.send("Shutting down.", ephemeral=True)
+        
+        t = threading.Thread(target=lambda: AdminCommands.wait_for_start(2))
+        t.start()
+        
         await self.client.close()
-        os.execv(sys.argv[0], sys.argv)
 
     @nextcord.slash_command(name="wipe", description="Wipes all data", guild_ids=ADMIN_GUILDS)
     async def wipe(self, interaction: Interaction):

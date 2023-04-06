@@ -7,6 +7,7 @@ import sys
 import threading
 import time
 import git
+import data
 
 
 ADMIN_GUILDS = [658882526470864896]
@@ -20,6 +21,10 @@ class AdminCommands(commands.Cog):
     async def shutdown(self, interaction: Interaction):
         await interaction.send("Shutting down.", ephemeral=True)
         await self.client.close()
+        
+    @nextcord.slash_command(name="usercount", description="Displays amount of accounts.", guild_ids=ADMIN_GUILDS)
+    async def user_count(self, interaction: Interaction):
+        await interaction.send(f"{len(data._data['accounts'])}", ephemeral=True)
         
     def wait_for_start(delay: int, program: str):
         time.sleep(delay)
